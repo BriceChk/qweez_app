@@ -25,11 +25,36 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
   final List<String> _listAnswersDropDown2 = ['Answer 1', 'Answer 2'];
   List<String> _listDropDown = [];
 
+  String _correctAnswerSelected = '';
+
   @override
   void initState() {
     if (widget.question.type.isEmpty) {
       widget.question.type = listDropDownValue.last;
       _listDropDown = _listAnswersDropDown4;
+      _correctAnswerSelected = _listAnswersDropDown4.first;
+    } else {
+      // Set the listDropDown according to the one selected before (in the database)
+      if (widget.question.type == listDropDownValue.last) {
+        _listDropDown = _listAnswersDropDown4;
+      } else if (widget.question.type == listDropDownValue[1]) {
+        _listDropDown = _listAnswersDropDown2;
+      }
+
+      int index = widget.question.answers.indexWhere((answer) => answer.value!);
+      switch (index) {
+        case 0:
+          _correctAnswerSelected = _listAnswersDropDown4.first;
+          break;
+        case 1:
+          _correctAnswerSelected = _listAnswersDropDown4[1];
+          break;
+        case 2:
+          _correctAnswerSelected = _listAnswersDropDown4[2];
+          break;
+        case 3:
+          _correctAnswerSelected = _listAnswersDropDown4[3];
+      }
     }
     // If only the question is a new one and no answer was created before we add the default one
     if (widget.question.answers.isEmpty) {
@@ -125,7 +150,7 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
             MyDropDownFormField(
               titleText: 'Choose the correct answer',
               hintText: 'Select the answer that is correct',
-              value: _listDropDown.first,
+              value: _correctAnswerSelected,
               itemsList: _listDropDown,
               onChanged: (value) {
                 // Set all the value to false before selecting the new one
