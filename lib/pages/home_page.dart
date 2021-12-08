@@ -364,10 +364,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     width: 350,
                     padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical * 2),
                     decoration: BoxDecoration(
-                      color: colorLightGray.withOpacity(0.25),
+                      color: colorLightGray.withOpacity(0.75),
                       borderRadius: const BorderRadius.all(Radius.circular(borderRadius)),
                       border: Border.all(
-                        color: colorWhite.withOpacity(0.25),
+                        color: colorWhite.withOpacity(0.40),
                         width: 2,
                       ),
                     ),
