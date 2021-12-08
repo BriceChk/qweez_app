@@ -49,8 +49,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
     );
     _animationController.repeat(reverse: true);
-
-    _getData();
   }
 
 /*  // In order to get hot reload to work we need to pause the camera if the platform
@@ -79,6 +77,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     MyApp.sizeNotificationBar = MediaQuery.of(context).padding.top;
+
+    _getData();
 
     return Scaffold(
       appBar: HomePageAppBar(
