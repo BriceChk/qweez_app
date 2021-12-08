@@ -24,4 +24,4 @@ const borderRadius = 24.0;
 
 const listDropDownValue = ['Open answer (written)', '2 Answers', '4 Answers'];
 
-const validateText = 'Validate';
+const validateText = 'Save';
