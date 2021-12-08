@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +86,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       appBar: HomePageAppBar(
         onTap: () {
           _showQrCodeDialog(context);
+        },
+        showDeleteAccountConfirmation: () {
+          _showDeleteAccountConfirmation(context);
         },
       ),
       body: _getBody(),
@@ -609,6 +613,59 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         controller.resumeCamera();
       });
     });
+  }
+
+  Future<void> _showDeleteAccountConfirmation(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius / 1.5),
+          ),
+          title: const Text('Do you want to delete your account?'),
+          actions: <Widget>[
+            TextButton(
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.all(
+                  colorBlue.withOpacity(0.15),
+                ),
+              ),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: fontSizeText,
+                  color: colorBlue,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.all(
+                  colorRed.withOpacity(0.15),
+                ),
+              ),
+              child: const Text(
+                'Delete',
+                style: TextStyle(
+                  fontSize: fontSizeText,
+                  color: colorRed,
+                ),
+              ),
+              onPressed: () {
+                FirebaseAuth.instance.currentUser!.delete();
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

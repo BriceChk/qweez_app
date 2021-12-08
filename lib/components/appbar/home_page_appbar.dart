@@ -7,10 +7,12 @@ import 'package:qweez_app/main.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSize {
   final Function() onTap;
+  final Function() showDeleteAccountConfirmation;
 
   const HomePageAppBar({
     Key? key,
     required this.onTap,
+    required this.showDeleteAccountConfirmation,
   }) : super(key: key);
 
   @override
@@ -61,7 +63,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                             // Case when we hit "delete account"
                             case 1:
                               //TODO
-                              print('delete');
+                              showDeleteAccountConfirmation();
                               break;
                             // Case when we hit "Log out"
                             case 2:
