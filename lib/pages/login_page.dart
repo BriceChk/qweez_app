@@ -131,10 +131,10 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               MyTextFormField(
                                 valueText: _email,
-                                hintText: 'Email',
+                                hintText: 'E-mail',
                                 textInputAction: TextInputAction.next,
                                 validator: (String? email) {
-                                  return _email.isEmpty ? 'Please enter a email' : null;
+                                  return _email.isEmpty ? 'Please enter an e-mail' : null;
                                 },
                                 onChanged: (String email) {
                                   _email = email;
@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                                   isPassword: true,
                                   validator: (String? passwordConfirmation) {
                                     return passwordConfirmation!.isEmpty
-                                        ? 'Please enter the confirmation of your password'
+                                        ? 'Please enter re-enter your password'
                                         : _passwordConfirmation != _password
                                             ? 'The passwords do not correspond'
                                             : null;
@@ -189,9 +189,9 @@ class _LoginPageState extends State<LoginPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              "Don't you have an account?",
-                              style: TextStyle(
+                            Text(
+                              _isRegister ? "You already have an account?" : "You don't have an account?",
+                              style: const TextStyle(
                                 color: colorWhite,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -266,7 +266,7 @@ class _LoginPageState extends State<LoginPage> {
       userCredential.user!.sendEmailVerification();
 
       _showEmailSend(
-        'A verification email was send to your email address.',
+        'A verification e-mail was sent to your email address.',
         'Please confirm it before logging in!',
         'I will check',
       );
@@ -279,12 +279,12 @@ class _LoginPageState extends State<LoginPage> {
         });
       } else if (e.code == 'email-already-in-use') {
         setState(() {
-          _errorText = "An account already exist with this email address.";
+          _errorText = "An account already exists with this e-mail address.";
         });
       }
     } catch (e) {
       setState(() {
-        _errorText = "An error occur, please try again.";
+        _errorText = "An error occured, please try again.";
       });
     }
   }
@@ -300,24 +300,20 @@ class _LoginPageState extends State<LoginPage> {
         Beamer.of(context).beamBack();
       } else {
         _showEmailSend(
-          'This email address was not verified.',
-          'A verification email was send to your address email, if you have not recevied it, please check your spam.',
+          'Your account is not verified.',
+          'A verification e-mail was sent to you, if you have not received it, please check your spam.',
           'Understood',
         );
       }
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         setState(() {
-          _errorText = "No account exist with this email address, please register.";
-        });
-      } else if (e.code == 'wrong-password') {
-        setState(() {
-          _errorText = "Password or email address incorrect, please try again.";
+          _errorText = "Invalid e-mail or password, please try again.";
         });
       }
     } catch (e) {
       setState(() {
-        _errorText = "An error occur, please try again.";
+        _errorText = "An error occured, please try again.";
       });
     }
   }

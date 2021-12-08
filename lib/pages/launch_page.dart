@@ -9,8 +9,7 @@ class LaunchPage extends StatefulWidget {
   State<LaunchPage> createState() => _LaunchPageState();
 }
 
-class _LaunchPageState extends State<LaunchPage>
-    with SingleTickerProviderStateMixin {
+class _LaunchPageState extends State<LaunchPage> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
 
