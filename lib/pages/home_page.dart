@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   List<Questionnaire> _listQuestionnaire = [];
 
-  var _loggedIn = false;
+  bool get _loggedIn => MyApp.user != null;
   var _isLoaded = false;
 
   @override
@@ -62,15 +62,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }*/
 
   void _getData() {
-    _checkIsUserConnected();
     if (_loggedIn) {
-      _getQuestionnaires(MyApp.userCredential!.user!.uid);
-    }
-  }
-
-  void _checkIsUserConnected() {
-    if (MyApp.userCredential != null) {
-      _loggedIn = true;
+      _getQuestionnaires(MyApp.user!.uid);
     }
   }
 

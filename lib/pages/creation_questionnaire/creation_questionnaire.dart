@@ -1,17 +1,18 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:beamer/beamer.dart';
 import 'package:qweez_app/components/form/my_text_form_field_complete.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/question.dart';
 import 'package:qweez_app/models/questionnaire.dart';
 import 'package:qweez_app/pages/creation_questionnaire/creation_answer.dart';
-import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/services/repository/questionnaire_repository.dart';
 
 class CreationQuestionnairePage extends StatefulWidget {
-  const CreationQuestionnairePage({Key? key}) : super(key: key);
+  final String? questionnaireId;
+
+  const CreationQuestionnairePage({Key? key, this.questionnaireId}) : super(key: key);
 
   @override
   State<CreationQuestionnairePage> createState() => _CreationQuestionnairePageState();
@@ -25,42 +26,33 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
   final List<Question> _listQuestion = [];
 
   late final String _userId;
-  String _name = '', _description = '', _questionnaireId = '';
-
-  bool _firstBuild = true;
+  String _name = '', _description = '';
 
   @override
   void initState() {
-    _userId = MyApp.userCredential!.user!.uid;
     super.initState();
+    _userId = MyApp.user!.uid;
+
+    if (widget.questionnaireId != null) {
+      _getData();
+    }
   }
 
   Future<void> _getData() async {
-    _questionnaire = await _questionnaireRepository.getQuestionnairesById(_questionnaireId);
+    _questionnaire = await _questionnaireRepository.getQuestionnairesById(widget.questionnaireId!);
 
-    // Set all the data for the page
-    _name = _questionnaire!.name;
-    _description = _questionnaire!.description;
-    for (var question in _questionnaire!.questions) {
-      _listQuestion.add(question);
-    }
-    setState(() {});
+    setState(() {
+      // Set all the data for the page
+      _name = _questionnaire!.name;
+      _description = _questionnaire!.description;
+      for (var question in _questionnaire!.questions) {
+        _listQuestion.add(question);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_firstBuild) {
-      if (Beamer.of(context).currentBeamLocation.state.pathParameters['questionnaireId'] != null) {
-        _questionnaireId = Beamer.of(context).currentBeamLocation.state.pathParameters['questionnaireId']!;
-        _getData();
-      }
-      _firstBuild = false;
-    }
-
-    if (_questionnaire == null && _questionnaireId.isNotEmpty) {
-      return const LaunchPage();
-    }
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

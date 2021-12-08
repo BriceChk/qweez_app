@@ -12,17 +12,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qweez_app/pages/questions/questions_presenter_waiting_page.dart';
 import 'package:qweez_app/pages/ranking_page.dart';
 
+import 'firebase_options.dart';
+
 void main() async {
-  // Set the orientation to portrait only
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // Set the orientation to portrait only
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((_) => runApp(const MyApp()));
+  ]);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  static UserCredential? userCredential;
+  static User? user;
   static double sizeNotificationBar = 0.0;
 
   const MyApp({Key? key}) : super(key: key);
@@ -32,58 +38,42 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _initialized = false;
-  bool _error = false;
-
   @override
   void initState() {
-    initializeFlutterFire();
     super.initState();
-  }
 
-  // Define an async function to initialize FlutterFire
-  void initializeFlutterFire() async {
-    try {
-      // Wait for Firebase to initialize and set `_initialized` state to true
-      await Firebase.initializeApp();
-      setState(() {
-        _initialized = true;
-      });
-    } catch (e) {
-      // Set `_error` state to true if Firebase initialization fails
-      setState(() {
-        _error = true;
-      });
-    }
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      setState(() => MyApp.user = user);
+    });
   }
 
   // Define the location of our routes
   final _routerDelegate = BeamerDelegate(
     initialPath: '/',
-    locationBuilder: SimpleLocationBuilder(
+    locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state) => BeamPage(
-              key: const ValueKey('home'),
-              child: const HomePage(),
+        '/': (context, state, data) => const BeamPage(
+              key: ValueKey('home'),
+              child: HomePage(),
             ),
-        '/launch': (context, state) => BeamPage(
-              key: const ValueKey('launch'),
-              child: const LaunchPage(),
+        '/launch': (context, state, data) => const BeamPage(
+              key: ValueKey('launch'),
+              child: LaunchPage(),
             ),
-        '/editQuestionnaire/:questionnaireId': (context, state) {
+        '/editQuestionnaire/:questionnaireId': (context, state, data) {
           final questionnaireId = state.pathParameters['questionnaireId']!;
           return BeamPage(
             key: ValueKey('editQuestionnaire-$questionnaireId'),
             type: BeamPageType.cupertino,
-            child: const CreationQuestionnairePage(),
+            child: CreationQuestionnairePage(questionnaireId: questionnaireId),
           );
         },
-        '/creationQuestionnaire': (context, state) => BeamPage(
-              key: const ValueKey('creationQuestionnaire'),
-              child: const CreationQuestionnairePage(),
+        '/creationQuestionnaire': (context, state, data) => const BeamPage(
+              key: ValueKey('creationQuestionnaire'),
+              child: CreationQuestionnairePage(),
               type: BeamPageType.cupertino,
             ),
-        '/question/:questionnaireId': (context, state) {
+        '/question/:questionnaireId': (context, state, data) {
           final questionnaireId = state.pathParameters['questionnaireId']!;
           return BeamPage(
             key: ValueKey('question-$questionnaireId'),
@@ -91,7 +81,7 @@ class _MyAppState extends State<MyApp> {
             type: BeamPageType.cupertino,
           );
         },
-        '/questionPresenterWaiting/:questionnaireId/:username': (context, state) {
+        '/questionPresenterWaiting/:questionnaireId/:username': (context, state, data) {
           final questionnaireId = state.pathParameters['questionnaireId']!;
           final username = state.pathParameters['username']!;
           return BeamPage(
@@ -103,14 +93,14 @@ class _MyAppState extends State<MyApp> {
             type: BeamPageType.cupertino,
           );
         },
-        '/login': (context, state) => BeamPage(
-              key: const ValueKey('login'),
-              child: const LoginPage(),
+        '/login': (context, state, data) => const BeamPage(
+              key: ValueKey('login'),
+              child: LoginPage(),
               type: BeamPageType.cupertino,
             ),
-        '/ranking': (context, state) => BeamPage(
-              key: const ValueKey('ranking'),
-              child: const RankingPage(),
+        '/ranking': (context, state, data) => const BeamPage(
+              key: ValueKey('ranking'),
+              child: RankingPage(),
               type: BeamPageType.cupertino,
             ),
       },
@@ -119,26 +109,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (_error) {
-      return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(
-            child: Text('Error'),
-          ),
-        ),
-      );
-    }
-
-    if (!_initialized) {
-      return MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        routerDelegate: _routerDelegate,
-        routeInformationParser: BeamerParser(),
-        backButtonDispatcher: BeamerBackButtonDispatcher(delegate: _routerDelegate),
-      );
-    }
-
     return BeamerProvider(
       routerDelegate: _routerDelegate,
       child: MaterialApp.router(

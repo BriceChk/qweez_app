@@ -36,8 +36,8 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
   @override
   initState() {
     super.initState();
-    if (MyApp.userCredential != null) {
-      _presenterId = MyApp.userCredential!.user!.uid;
+    if (MyApp.user != null) {
+      _presenterId = MyApp.user!.uid;
     }
 
     _getData();

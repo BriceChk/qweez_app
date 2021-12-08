@@ -296,7 +296,7 @@ class _LoginPageState extends State<LoginPage> {
           await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
 
       if (userCredential.user!.emailVerified) {
-        MyApp.userCredential = userCredential;
+        MyApp.user = userCredential.user;
         Beamer.of(context).beamBack();
       } else {
         _showEmailSend(
