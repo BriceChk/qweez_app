@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:beamer/beamer.dart';
 import 'package:qweez_app/components/form/my_text_form_field_complete.dart';
@@ -193,7 +194,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => CreationAnswerPage(
                       question: _listQuestion[index],
                     ),
