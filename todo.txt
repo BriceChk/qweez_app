@@ -1,0 +1,4 @@
+questionnaire : id obligatoire ou non ?
+home_page: redirection lorsque le un qr code correct est detecter
+questionnaire: regarder ensemble la suppression, le back
+Questionnaitre : integrer la possibilité de choisir son temps de réponse

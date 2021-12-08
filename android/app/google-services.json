@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "221530704746",
+    "project_id": "qweez-app",
+    "storage_bucket": "qweez-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221530704746:android:8e93bb3598036fbdeb7313",
+        "android_client_info": {
+          "package_name": "fr.bricechk.qweez_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221530704746-lt04hsp6kru5i3gelot1fv6291t9skeu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEkhZNTIwOa8Hak_LxBgNiT07X57bLyIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221530704746-lt04hsp6kru5i3gelot1fv6291t9skeu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
