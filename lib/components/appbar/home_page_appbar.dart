@@ -6,10 +6,12 @@ import 'package:qweez_app/main.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSize {
   final Function() onTap;
+  final Function() setState;
 
   const HomePageAppBar({
     Key? key,
     required this.onTap,
+    required this.setState,
   }) : super(key: key);
 
   @override
@@ -21,15 +23,74 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: paddingVertical),
-              child: Text(
-                'Qweez',
-                style: TextStyle(
-                  fontSize: fontSizeAppName,
-                  color: colorWhite,
-                  fontWeight: FontWeight.w900,
-                ),
+            Padding(
+              padding: const EdgeInsets.only(top: paddingVertical),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Text(
+                    'Qweez',
+                    style: TextStyle(
+                      fontSize: fontSizeAppName,
+                      color: colorWhite,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  if (MyApp.userCredential != null)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: PopupMenuButton<int>(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(borderRadius / 2),
+                          ),
+                        ),
+                        itemBuilder: (BuildContext context) {
+                          return <PopupMenuEntry<int>>[
+                            const PopupMenuItem(
+                              value: 1,
+                              child: Text('Delete account'),
+                            ),
+                            const PopupMenuItem(
+                              value: 2,
+                              child: Text('Log out'),
+                            ),
+                          ];
+                        },
+                        onSelected: (result) {
+                          switch (result) {
+                            // Case when we hit "delete account"
+                            case 1:
+                              //TODO
+                              print('delete');
+                              break;
+                            // Case when we hit "Log out"
+                            case 2:
+                              //TODO
+                              setState;
+                              break;
+                          }
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: paddingHorizontal),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: paddingVertical / 3,
+                            horizontal: paddingHorizontal / 3,
+                          ),
+                          decoration: const BoxDecoration(
+                            color: colorWhite,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            MyApp.userCredential!.user!.email![0].toUpperCase() + MyApp.userCredential!.user!.email![1],
+                            style: const TextStyle(
+                              fontSize: fontSizeSubtitle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             // Scanning and enter code + title container
