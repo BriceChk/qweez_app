@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
@@ -6,12 +7,10 @@ import 'package:qweez_app/main.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSize {
   final Function() onTap;
-  final Function() setState;
 
   const HomePageAppBar({
     Key? key,
     required this.onTap,
-    required this.setState,
   }) : super(key: key);
 
   @override
@@ -36,7 +35,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  if (MyApp.userCredential != null)
+                  if (MyApp.user != null)
                     Align(
                       alignment: Alignment.centerRight,
                       child: PopupMenuButton<int>(
@@ -66,8 +65,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                               break;
                             // Case when we hit "Log out"
                             case 2:
-                              //TODO
-                              setState;
+                              FirebaseAuth.instance.signOut();
                               break;
                           }
                         },
@@ -82,7 +80,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                             shape: BoxShape.circle,
                           ),
                           child: Text(
-                            MyApp.userCredential!.user!.email![0].toUpperCase() + MyApp.userCredential!.user!.email![1],
+                            MyApp.user!.email![0].toUpperCase() + MyApp.user!.email![1],
                             style: const TextStyle(
                               fontSize: fontSizeSubtitle,
                             ),
