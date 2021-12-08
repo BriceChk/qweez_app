@@ -1,12 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:glassmorphism/glassmorphism.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:glassmorphism/glassmorphism.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qweez_app/components/appbar/home_page_appbar.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:beamer/beamer.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/questionnaire.dart';
 import 'package:qweez_app/pages/responsive.dart';
