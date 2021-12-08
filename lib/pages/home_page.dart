@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               onPressed: () {
                 Beamer.of(context).beamToNamed('/creationQuestionnaire');
               },
-              tooltip: 'Create a quiz',
+              tooltip: 'Create a Qweez',
               child: const Icon(
                 Icons.add,
                 color: colorBlack,
@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         horizontal: paddingHorizontal,
       ),
       child: Text(
-        'You did not created any qweez.\n\nStart now by clicking on the "+" button.',
+        "You don't have any Qweez.\n\nStart now by clicking on the '+' button.",
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: fontSizeSubtitle,
@@ -264,7 +264,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    questionnaire.questions.length.toString() + ' Questions',
+                    questionnaire.questions.length.toString() + ' questions',
                     style: TextStyle(
                       fontSize: fontSizeText,
                       fontWeight: FontWeight.w800,
@@ -383,7 +383,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'You are not logged in.\nLog in if you want to create your own queez!',
+                          'You are not logged in.\nLog in if you want to create your own Qweez!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: fontSizeSubtitle,

@@ -73,7 +73,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
         ),
         centerTitle: true,
         title: const Text(
-          'Create a questionnaire',
+          'Create a Qweez',
         ),
       ),
       body: Form(
@@ -88,7 +88,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
             child: Column(
               children: [
                 MyTextFormFieldComplete(
-                  titleText: 'Name of the qweez',
+                  titleText: 'Name of the Qweez',
                   valueText: _name,
                   hintText: 'Name',
                   required: true,
@@ -100,7 +100,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
                 MyTextFormFieldComplete(
                   titleText: 'Description',
                   valueText: _description,
-                  hintText: 'This is a qweez to learn ...',
+                  hintText: 'This is a Qweez to learn...',
                   required: true,
                   validator: (String? description) {
                     return description!.isEmpty ? 'Please enter a description' : null;

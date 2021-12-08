@@ -80,7 +80,7 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
         ),
         centerTitle: true,
         title: const Text(
-          'Create a answers',
+          'Create an answer',
         ),
       ),
       body: SingleChildScrollView(
@@ -107,7 +107,7 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
             onChanged: (String questionText) => widget.question.question = questionText,
           ),
           MyDropDownFormField(
-            titleText: 'Type of the question ',
+            titleText: 'Type of the question',
             hintText: 'Choose the type of the question',
             value: widget.question.type,
             itemsList: listDropDownValue,
@@ -175,7 +175,7 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
             textInputType: TextInputType.number,
             validator: (value) {
               if (value!.contains(',') || value.contains('.')) {
-                return 'Please enter interger value';
+                return 'Please enter an integer value';
               }
               if (value.startsWith('0')) {
                 return 'Please enter a number greater than 0';
