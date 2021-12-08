@@ -48,11 +48,9 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
 
     setState(() {
       // TODO check pour mettre la bdd en accord
-      for (int i = 0; i < 40; i++) {
-        _questionnaire!.members.add(
-          Member(userName: widget.username),
-        );
-      }
+      _questionnaire!.members.add(
+        Member(userName: widget.username),
+      );
     });
   }
 
