@@ -86,9 +86,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         onTap: () {
           _showQrCodeDialog(context);
         },
-        setState: () {
-          setState(() {});
-        },
       ),
       body: _getBody(),
       floatingActionButton: _loggedIn
