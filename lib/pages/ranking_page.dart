@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
 import 'package:qweez_app/components/cards/my_ranking_card.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:qweez_app/models/member.dart';
-import 'package:qweez_app/models/questionnaire.dart';
+import 'package:qweez_app/models/player.dart';
+import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/responsive.dart';
 
 class RankingPage extends StatelessWidget {
@@ -19,26 +19,26 @@ class RankingPage extends StatelessWidget {
 
   Widget _getBody(BuildContext context) {
     var _listMembers = [
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
     ];
 
     _listMembers.sort((a, b) => b.score.compareTo(a.score));
@@ -72,7 +72,7 @@ class RankingPage extends StatelessWidget {
 
                     return MyRankingCard(
                       member: member,
-                      questionnaire: Questionnaire(questions: [], userId: '', name: '', description: ''),
+                      qweez: Qweez(questions: [], userId: '', name: '', description: ''),
                       rank: rank + 1,
                     );
                   }).toList(),

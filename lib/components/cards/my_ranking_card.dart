@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:qweez_app/models/member.dart';
-import 'package:qweez_app/models/questionnaire.dart';
+import 'package:qweez_app/models/player.dart';
+import 'package:qweez_app/models/qweez.dart';
 
 class MyRankingCard extends StatelessWidget {
-  final Member member;
-  final Questionnaire questionnaire;
+  final Player member;
+  final Qweez qweez;
   final int rank;
 
   const MyRankingCard({
     Key? key,
     required this.member,
-    required this.questionnaire,
+    required this.qweez,
     required this.rank,
   }) : super(key: key);
 
@@ -69,7 +69,7 @@ class MyRankingCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: paddingVertical),
             child: Text(
-              member.score.toString() + ' / ' + questionnaire.questions.length.toString(),
+              member.score.toString() + ' / ' + qweez.questions.length.toString(),
               style: const TextStyle(
                 color: colorYellow,
                 fontSize: fontSizeText,
