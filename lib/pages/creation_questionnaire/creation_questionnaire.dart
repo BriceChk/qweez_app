@@ -57,7 +57,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
       _firstBuild = false;
     }
 
-    if (_questionnaire == null && _questionnaireId.isEmpty) {
+    if (_questionnaire == null && _questionnaireId.isNotEmpty) {
       return const LaunchPage();
     }
 
