@@ -5,12 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qweez_app/components/appbar/home_page_appbar.dart';
-import 'package:qweez_app/components/form/my_text_form_field.dart';
+import 'package:qweez_app/components/cards/qweez_card.dart';
+import 'package:qweez_app/components/choose_playername_modal.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
-import 'package:qweez_app/models/questionnaire.dart';
+import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/responsive.dart';
-import 'package:qweez_app/services/repository/questionnaire_repository.dart';
+import 'package:qweez_app/repository/questionnaire_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,13 +29,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
 
-  List<Questionnaire> _listQuestionnaire = [];
+  List<Qweez> _listQuestionnaire = [];
 
   bool get _loggedIn => MyApp.user != null;
   var _isLoaded = false;
 
   @override
   void initState() {
+    super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -47,7 +50,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
     _animationController.repeat(reverse: true);
 
-    super.initState();
+    _getData();
   }
 
 /*  // In order to get hot reload to work we need to pause the camera if the platform
@@ -64,32 +67,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   void _getData() {
     if (_loggedIn) {
-      _getQuestionnaires(MyApp.user!.uid);
+      _questionnaireRepository.getUserQweezes(MyApp.user!.uid).then((value) {
+        setState(() {
+          _listQuestionnaire = value;
+          _isLoaded = true;
+        });
+      });
     }
-  }
-
-  void _getQuestionnaires(String userId) async {
-    _listQuestionnaire = await _questionnaireRepository.getQuestionnairesByUserId(userId);
-    setState(() {
-      _isLoaded = true;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     MyApp.sizeNotificationBar = MediaQuery.of(context).padding.top;
 
-    // TODO trouver une solution pour ca
-    _getData();
-
     return Scaffold(
       appBar: HomePageAppBar(
         onTap: () {
           _showQrCodeDialog(context);
         },
-        showDeleteAccountConfirmation: () {
-          _showDeleteAccountConfirmation(context);
-        },
+        showDeleteAccountConfirmation: _showDeleteAccountConfirmation,
       ),
       body: _getBody(),
       floatingActionButton: _loggedIn
@@ -158,7 +154,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget loggedContent(List<Questionnaire> listQuestionnaire) {
+  Widget loggedContent(List<Qweez> listQuestionnaire) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal),
       child: Column(
@@ -191,7 +187,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             children: listQuestionnaire.map((questionnaire) {
               int index = listQuestionnaire.indexOf(questionnaire);
 
-              return cardQuestionnaire(questionnaire, index);
+              return QweezCard(qweez: questionnaire, index: index);
             }).toList(),
           ),
         ],
@@ -199,109 +195,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget cardQuestionnaire(Questionnaire questionnaire, int index) {
-    Color buttonColor = index.isEven ? const Color(0xffF8E7C9) : const Color(0xff8D9CE2);
-    Color iconColor = index.isEven ? colorBlack : colorWhite;
-    Color containerColor = index.isEven ? colorYellow : colorBlue;
-    Color? textColor = index.isOdd ? colorWhite : null;
-    Color shadowColor = index.isEven ? colorYellow.withOpacity(0.2) : colorBlue.withOpacity(0.2);
-
-    return GestureDetector(
-      onTap: () {
-        showModalBottomSheet(
-          shape: const RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.only(topRight: Radius.circular(borderRadius), topLeft: Radius.circular(borderRadius)),
-          ),
-          context: context,
-          builder: (context) => _showEditOrLaunch(questionnaire),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(top: paddingVertical),
-        padding: const EdgeInsets.fromLTRB(paddingHorizontal, paddingVertical, paddingHorizontal, 0),
-        height: 120,
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: containerColor,
-          borderRadius: BorderRadius.circular(borderRadius),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor,
-              spreadRadius: 3,
-              blurRadius: 5,
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              questionnaire.name,
-              style: TextStyle(
-                fontSize: fontSizeSubtitle,
-                fontWeight: FontWeight.w800,
-                color: textColor,
-              ),
-            ),
-            Text(
-              questionnaire.description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: fontSizeText,
-                fontWeight: FontWeight.w500,
-                color: textColor,
-              ),
-            ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(bottom: paddingVertical / 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    questionnaire.questions.length.toString() + ' questions',
-                    style: TextStyle(
-                      fontSize: fontSizeText,
-                      fontWeight: FontWeight.w800,
-                      color: textColor,
-                    ),
-                  ),
-                  Container(
-                    height: 30,
-                    width: 30,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: buttonColor),
-                    child: Icon(
-                      Icons.arrow_forward_rounded,
-                      color: iconColor,
-                      size: 20,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget loginContent() {
-    final List<Questionnaire> _listFakeQuestionnaire = [
-      Questionnaire(
+    final List<Qweez> _listFakeQuestionnaire = [
+      Qweez(
         userId: 'userId',
         name: 'name',
         description: 'description',
         questions: [],
       ),
-      Questionnaire(
+      Qweez(
         userId: 'userId',
         name: 'name',
         description: 'description',
         questions: [],
       ),
-      Questionnaire(
+      Qweez(
         userId: 'userId',
         name: 'name',
         description: 'description',
@@ -335,7 +243,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 children: _listFakeQuestionnaire.map((questionnaire) {
                   int index = _listFakeQuestionnaire.indexOf(questionnaire);
 
-                  return cardQuestionnaire(questionnaire, index);
+                  return QweezCard(qweez: questionnaire, index: index);
                 }).toList(),
               ),
             ),
@@ -410,161 +318,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _showEditOrLaunch(Questionnaire questionnaire) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: paddingVertical,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: paddingVertical,
-                left: paddingHorizontal,
-                right: paddingHorizontal,
-              ),
-              child: Text(
-                'Qweez: ${questionnaire.name}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: fontSizeSubtitle,
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: paddingHorizontal / 2),
-              child: InkWell(
-                highlightColor: colorBlue.withOpacity(0.1),
-                splashColor: colorBlue.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(borderRadius),
-                onTap: () {
-                  Beamer.of(context).beamToNamed('/editQuestionnaire/${questionnaire.id!}');
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2, horizontal: paddingHorizontal / 2),
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.edit,
-                        color: colorBlue,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: paddingHorizontal / 2),
-                        child: Text(
-                          'Edit the Qweez',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: fontSizeSubtitle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: paddingHorizontal / 2,
-              ),
-              child: InkWell(
-                highlightColor: colorYellow.withOpacity(0.1),
-                splashColor: colorYellow.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(borderRadius),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showPickUsername(questionnaire.id!);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: paddingVertical / 2,
-                    horizontal: paddingHorizontal / 2,
-                  ),
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: colorYellow,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: paddingHorizontal / 2),
-                        child: Text(
-                          'Start the Qweez',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: fontSizeSubtitle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showPickUsername(String id) {
-    var _formKey = GlobalKey<FormState>();
-    var _username = '';
-
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius / 1.5),
-          ),
-          insetPadding: EdgeInsets.zero,
-          title: const Text(
-            'Choose a username',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: fontSizeSubtitle,
-            ),
-          ),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MyTextFormField(
-                  hintText: 'Username',
-                  textInputAction: TextInputAction.done,
-                  valueText: '',
-                  validator: (username) {
-                    if (username!.isEmpty) {
-                      return 'Please enter your username';
-                    }
-                  },
-                  onChanged: (username) {
-                    _username = username;
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: paddingVertical),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Beamer.of(context).beamToNamed('/questionPresenterWaiting/$id/$_username');
-                      }
-                    },
-                    child: const Text('Validate'),
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> _showQrCodeDialog(BuildContext context) {
     return showDialog<void>(
       context: context,
@@ -607,7 +360,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           if (_result!.code!.contains('QweezApp')) {
             controller.pauseCamera();
             var id = _result!.code!.split("QweezApp-");
-            _showPickUsername(id.last);
+            showPickUsername(context, id.last);
           }
         }
         controller.resumeCamera();
@@ -615,7 +368,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     });
   }
 
-  Future<void> _showDeleteAccountConfirmation(BuildContext context) async {
+  Future<void> _showDeleteAccountConfirmation() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!

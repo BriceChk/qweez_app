@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:qweez_app/main.dart';
-import 'package:qweez_app/models/questionnaire.dart';
+import 'package:qweez_app/models/qweez.dart';
 
 class QuestionsAppBar extends StatelessWidget implements PreferredSize {
-  final Questionnaire questionnaire;
+  final Qweez qweez;
 
   const QuestionsAppBar({
     Key? key,
-    required this.questionnaire,
+    required this.qweez,
   }) : super(key: key);
 
   @override
@@ -39,7 +39,7 @@ class QuestionsAppBar extends StatelessWidget implements PreferredSize {
                   minHeight: 50,
                 ),
                 child: AutoSizeText(
-                  questionnaire.questions[0].question,
+                  qweez.questions[0].question,
                   maxLines: 4,
                   style: const TextStyle(
                     fontSize: fontSizeTitle,
@@ -59,7 +59,7 @@ class QuestionsAppBar extends StatelessWidget implements PreferredSize {
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
                 child: Text(
-                  'Question ' + questionnaire.questions.indexOf(questionnaire.questions[0]).toString(),
+                  'Question ' + qweez.questions.indexOf(qweez.questions[0]).toString(),
                 ),
               ),
             ),

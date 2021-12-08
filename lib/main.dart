@@ -65,12 +65,12 @@ class _MyAppState extends State<MyApp> {
           return BeamPage(
             key: ValueKey('editQuestionnaire-$questionnaireId'),
             type: BeamPageType.cupertino,
-            child: CreationQuestionnairePage(questionnaireId: questionnaireId),
+            child: EditQweezPage(questionnaireId: questionnaireId),
           );
         },
         '/creationQuestionnaire': (context, state, data) => const BeamPage(
               key: ValueKey('creationQuestionnaire'),
-              child: CreationQuestionnairePage(),
+              child: EditQweezPage(),
               type: BeamPageType.cupertino,
             ),
         '/question/:questionnaireId': (context, state, data) {

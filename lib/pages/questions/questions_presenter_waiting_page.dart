@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
-import 'package:qweez_app/models/member.dart';
-import 'package:qweez_app/models/questionnaire.dart';
+import 'package:qweez_app/models/player.dart';
+import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/responsive.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:beamer/beamer.dart';
-import 'package:qweez_app/services/repository/questionnaire_repository.dart';
+import 'package:qweez_app/repository/questionnaire_repository.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class QuestionsPresenterWaitingPage extends StatefulWidget {
@@ -29,7 +29,7 @@ class QuestionsPresenterWaitingPage extends StatefulWidget {
 class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitingPage> {
   final _questionnaireRepository = QuestionnaireRepository();
 
-  Questionnaire? _questionnaire;
+  Qweez? _questionnaire;
 
   String _presenterId = '';
 
@@ -44,12 +44,12 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
   }
 
   Future<void> _getData() async {
-    _questionnaire = await _questionnaireRepository.getQuestionnairesById(widget.questionnaireId);
+    _questionnaire = await _questionnaireRepository.get(widget.questionnaireId);
 
     setState(() {
       // TODO check pour mettre la bdd en accord
       _questionnaire!.members.add(
-        Member(userName: widget.username),
+        Player(userName: widget.username),
       );
     });
   }

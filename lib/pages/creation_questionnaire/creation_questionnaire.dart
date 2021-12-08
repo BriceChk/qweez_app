@@ -5,23 +5,23 @@ import 'package:qweez_app/components/form/my_text_form_field_complete.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/question.dart';
-import 'package:qweez_app/models/questionnaire.dart';
+import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/creation_questionnaire/creation_answer.dart';
-import 'package:qweez_app/services/repository/questionnaire_repository.dart';
+import 'package:qweez_app/repository/questionnaire_repository.dart';
 
-class CreationQuestionnairePage extends StatefulWidget {
+class EditQweezPage extends StatefulWidget {
   final String? questionnaireId;
 
-  const CreationQuestionnairePage({Key? key, this.questionnaireId}) : super(key: key);
+  const EditQweezPage({Key? key, this.questionnaireId}) : super(key: key);
 
   @override
-  State<CreationQuestionnairePage> createState() => _CreationQuestionnairePageState();
+  State<EditQweezPage> createState() => _EditQweezPageState();
 }
 
-class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
+class _EditQweezPageState extends State<EditQweezPage> {
   final _formKey = GlobalKey<FormState>();
   final _questionnaireRepository = QuestionnaireRepository();
-  Questionnaire? _questionnaire;
+  Qweez? _questionnaire;
 
   final List<Question> _listQuestion = [];
 
@@ -39,7 +39,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
   }
 
   Future<void> _getData() async {
-    _questionnaire = await _questionnaireRepository.getQuestionnairesById(widget.questionnaireId!);
+    _questionnaire = await _questionnaireRepository.get(widget.questionnaireId!);
 
     setState(() {
       // Set all the data for the page
@@ -131,7 +131,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          final questionnaire = Questionnaire(
+                          final questionnaire = Qweez(
                             id: _userId,
                             name: _name,
                             description: _description,
@@ -141,7 +141,7 @@ class _CreationQuestionnairePageState extends State<CreationQuestionnairePage> {
                           /*if (widget.questionnaireId != null) {
                             await questionnaireRepository.updateQuestionnaire(questionnaire);
                           } else {*/
-                          await _questionnaireRepository.createQuestionnaire(questionnaire);
+                          await _questionnaireRepository.add(questionnaire);
                           //}
                           Beamer.of(context).beamBack();
                         }

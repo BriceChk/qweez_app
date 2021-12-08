@@ -4,10 +4,10 @@ import 'package:qweez_app/components/appbar/questions_appbar.dart';
 import 'package:qweez_app/components/cards/my_answer_card.dart';
 import 'package:qweez_app/components/cards/my_ranking_card.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:qweez_app/models/member.dart';
+import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/question.dart';
-import 'package:qweez_app/models/questionnaire.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/responsive.dart';
 
 class Questionpage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
 
-  final Questionnaire _questionnaire = Questionnaire(
+  final Qweez _questionnaire = Qweez(
     userId: 'userId',
     name: 'name',
     description: 'description',
@@ -65,7 +65,7 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: QuestionsAppBar(questionnaire: _questionnaire),
+      appBar: QuestionsAppBar(qweez: _questionnaire),
       body: _getBody(),
     );
   }
@@ -137,26 +137,26 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
   Widget _buildButtonPresenter() {
     //TODO implemter la vrai liste de user
     var _listMembers = [
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé ze zefze ffe zzfe ', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
-      Member(userName: 'XxJackiexX', score: 5),
-      Member(userName: 'Timothé', score: 2),
-      Member(userName: 'Jack'),
-      Member(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé ze zefze ffe zzfe ', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
+      Player(userName: 'XxJackiexX', score: 5),
+      Player(userName: 'Timothé', score: 2),
+      Player(userName: 'Jack'),
+      Player(userName: 'test', score: 3),
     ];
 
     _listMembers.sort((a, b) => b.score.compareTo(a.score));
@@ -217,7 +217,7 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
 
                             return MyRankingCard(
                               member: member,
-                              questionnaire: Questionnaire(questions: [], userId: '', name: '', description: ''),
+                              qweez: Qweez(questions: [], userId: '', name: '', description: ''),
                               rank: rank + 1,
                             );
                           }).toList(),
