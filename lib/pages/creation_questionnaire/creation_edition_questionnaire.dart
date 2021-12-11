@@ -6,7 +6,7 @@ import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/question.dart';
 import 'package:qweez_app/models/qweez.dart';
-import 'package:qweez_app/pages/creation_questionnaire/creation_answer.dart';
+import 'package:qweez_app/pages/creation_questionnaire/creation_edition_answer.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 
 class EditQweezPage extends StatefulWidget {

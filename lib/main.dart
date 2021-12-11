@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:qweez_app/pages/creation_questionnaire/creation_questionnaire.dart';
+import 'package:qweez_app/pages/creation_questionnaire/creation_edition_questionnaire.dart';
 import 'package:qweez_app/pages/home_page.dart';
 import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/login_page.dart';
