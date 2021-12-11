@@ -39,15 +39,15 @@ class _EditQweezPageState extends State<EditQweezPage> {
   }
 
   Future<void> _getData() async {
-    _questionnaire = await _questionnaireRepository.get(widget.questionnaireId!);
-
-    setState(() {
-      // Set all the data for the page
-      _name = _questionnaire!.name;
-      _description = _questionnaire!.description;
-      for (var question in _questionnaire!.questions) {
-        _listQuestion.add(question);
-      }
+    _questionnaireRepository.get(widget.questionnaireId!).then((value) {
+      setState(() {
+        _questionnaire = value;
+        _name = _questionnaire!.name;
+        _description = _questionnaire!.description;
+        for (var question in _questionnaire!.questions) {
+          _listQuestion.add(question);
+        }
+      });
     });
   }
 
