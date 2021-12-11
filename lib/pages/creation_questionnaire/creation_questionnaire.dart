@@ -132,7 +132,6 @@ class _EditQweezPageState extends State<EditQweezPage> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           final questionnaire = Qweez(
-                            id: _userId,
                             name: _name,
                             description: _description,
                             questions: _listQuestion,
