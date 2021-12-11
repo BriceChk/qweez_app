@@ -37,11 +37,10 @@ class Qweez {
     description = json[dbDescription];
     questions = List<Question>.from(json[dbQuestions].map((question) => Question.fromJson(question)));
     players = []; // Empty list because we'll not go through friebase for the user
-    isActive = json[isActive];
+    isActive = json[dbIsActive];
   }
 
   Map<String, dynamic> toJson() => {
-        dbId: id,
         dbUserId: userId,
         dbName: name,
         dbDescription: description,
