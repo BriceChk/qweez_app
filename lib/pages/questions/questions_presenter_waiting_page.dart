@@ -47,7 +47,7 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
     _questionnaire = await _questionnaireRepository.get(widget.questionnaireId);
 
     setState(() {
-      // TODO check pour mettre la bdd en accord
+      // TODO check pour mettre la bdd en accord + mettre isActive à true
       _questionnaire!.players.add(
         Player(userName: widget.username),
       );
@@ -191,14 +191,25 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
       builder: (BuildContext context) {
         var size = Responsive.isDesktop(context) ? 500.0 : 250.0;
         return AlertDialog(
-          content: SizedBox(
-            width: size,
-            height: size,
-            child: QrImage(
-              data: "QweezApp-${widget.questionnaireId}",
-              version: QrVersions.auto,
-              size: size,
-            ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.questionnaireId.substring(0, 5),
+                style: const TextStyle(
+                  fontSize: fontSizeTitle,
+                ),
+              ),
+              SizedBox(
+                width: size,
+                height: size,
+                child: QrImage(
+                  data: "QweezApp-${widget.questionnaireId}",
+                  version: QrVersions.auto,
+                  size: size,
+                ),
+              ),
+            ],
           ),
         );
       },
