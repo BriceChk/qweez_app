@@ -7,14 +7,14 @@ class Qweez {
   static const String dbName = 'name';
   static const String dbDescription = 'description';
   static const String dbQuestions = 'questions';
-  static const String dbMembers = 'members';
+  static const String dbPlayers = 'players';
 
   String? id = '';
   String name = '';
   String description = '';
   String userId = '';
   List<Question> questions = [];
-  List<Player> members = [];
+  List<Player> players = [];
 
   Qweez({
     this.id,
@@ -22,9 +22,9 @@ class Qweez {
     required this.name,
     required this.description,
     required this.questions,
-    List<Player>? members,
+    List<Player>? players,
   }) {
-    this.members = members ?? [];
+    this.players = players ?? [];
   }
 
   Qweez.fromJson(Map<String, dynamic> json) {
@@ -33,7 +33,7 @@ class Qweez {
     name = json[dbName];
     description = json[dbDescription];
     questions = List<Question>.from(json[dbQuestions].map((question) => Question.fromJson(question)));
-    members = []; // Empty list because we'll not go through friebase for the user
+    players = []; // Empty list because we'll not go through friebase for the user
   }
 
   Map<String, dynamic> toJson() => {
@@ -42,6 +42,6 @@ class Qweez {
         dbName: name,
         dbDescription: description,
         dbQuestions: List<dynamic>.from(questions.map((question) => question.toJson())),
-        dbMembers: [], // Empty list because we'll not go through friebase for the user
+        dbPlayers: [], // Empty list because we'll not go through friebase for the user
       };
 }

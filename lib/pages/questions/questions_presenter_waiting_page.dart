@@ -48,7 +48,7 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
 
     setState(() {
       // TODO check pour mettre la bdd en accord
-      _questionnaire!.members.add(
+      _questionnaire!.players.add(
         Player(userName: widget.username),
       );
     });
@@ -88,7 +88,7 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
                         mainAxisExtent: 40, // Card height (100) + Padding vertical
                         crossAxisSpacing: paddingHorizontal,
                         mainAxisSpacing: paddingVertical),
-                    children: _questionnaire!.members.map((member) {
+                    children: _questionnaire!.players.map((member) {
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal / 2),
                         alignment: Alignment.center,
