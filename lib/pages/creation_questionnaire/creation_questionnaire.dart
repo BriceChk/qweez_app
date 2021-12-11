@@ -137,6 +137,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
                             description: _description,
                             questions: _listQuestion,
                             userId: _userId,
+                            isActive: false,
                           );
                           /*if (widget.questionnaireId != null) {
                             await questionnaireRepository.updateQuestionnaire(questionnaire);

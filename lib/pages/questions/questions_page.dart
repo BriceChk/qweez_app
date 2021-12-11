@@ -35,6 +35,7 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
         time: 10,
       ),
     ],
+    isActive: false,
   );
 
   final _isPresenter = true;
@@ -217,7 +218,7 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
 
                             return MyRankingCard(
                               member: member,
-                              qweez: Qweez(questions: [], userId: '', name: '', description: ''),
+                              qweez: Qweez(questions: [], userId: '', name: '', description: '', isActive: false),
                               rank: rank + 1,
                             );
                           }).toList(),

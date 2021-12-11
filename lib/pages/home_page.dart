@@ -202,18 +202,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         name: 'name',
         description: 'description',
         questions: [],
+        isActive: false,
       ),
       Qweez(
         userId: 'userId',
         name: 'name',
         description: 'description',
         questions: [],
+        isActive: false,
       ),
       Qweez(
         userId: 'userId',
         name: 'name',
         description: 'description',
         questions: [],
+        isActive: false,
       )
     ];
 
