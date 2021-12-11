@@ -141,29 +141,30 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                         },
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(left: paddingVertical / 2),
-                      child: Material(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        color: colorBlack,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(50),
-                          onTap: onTap,
-                          highlightColor: Colors.transparent,
-                          splashColor: colorWhite.withOpacity(0.25),
-                          child: const Padding(
-                            padding: EdgeInsets.all(paddingHorizontal / 3),
-                            child: Icon(
-                              Icons.qr_code_scanner_rounded,
-                              color: colorWhite,
-                              size: 30,
+                    if (!kIsWeb)
+                      Container(
+                        margin: const EdgeInsets.only(left: paddingVertical / 2),
+                        child: Material(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          color: colorBlack,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(50),
+                            onTap: onTap,
+                            highlightColor: Colors.transparent,
+                            splashColor: colorWhite.withOpacity(0.25),
+                            child: const Padding(
+                              padding: EdgeInsets.all(paddingHorizontal / 3),
+                              child: Icon(
+                                Icons.qr_code_scanner_rounded,
+                                color: colorWhite,
+                                size: 30,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )
+                      )
                   ],
                 ),
               ],
