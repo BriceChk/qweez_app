@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   late Animation<Color?> _colorTween;
 
   List<Qweez> _listQuestionnaire = [];
+  List<Qweez> _listActiveQweez = [];
 
   bool get _loggedIn => MyApp.user != null;
   var _isLoaded = false;
@@ -72,6 +73,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         });
       });
     }
+    _questionnaireRepository.getAllActive().then((value) {
+      _listActiveQweez = value;
+    });
   }
 
   @override
@@ -82,11 +86,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       appBar: HomePageAppBar(
-        onTap: () {
-          _showQrCodeDialog(context);
-        },
-        showDeleteAccountConfirmation: _showDeleteAccountConfirmation,
-      ),
+          onTap: () {
+            _showQrCodeDialog(context);
+          },
+          showDeleteAccountConfirmation: _showDeleteAccountConfirmation,
+          context: context,
+          listQweez: _listActiveQweez),
       body: _getBody(),
       floatingActionButton: _loggedIn
           ? FloatingActionButton(
