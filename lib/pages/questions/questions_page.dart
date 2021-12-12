@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/appbar/questions_appbar.dart';
 import 'package:qweez_app/components/cards/my_answer_card.dart';
 import 'package:qweez_app/components/cards/my_ranking_card.dart';
+import 'package:qweez_app/components/form/my_text_form_field.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/question.dart';
@@ -31,6 +32,15 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
         type: listDropDownValue.last,
         answers: [
           Answer(answer: 'answer'),
+          Answer(answer: 'answer'),
+        ],
+        time: 10,
+      ),
+      Question(
+        question: 'test',
+        type: listDropDownValue.last,
+        answers: [
+          Answer(answer: 'blabla'),
         ],
         time: 10,
       ),
@@ -39,6 +49,8 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
   );
 
   final _isPresenter = true;
+
+  int _questionIndex = 0;
 
   @override
   void initState() {
@@ -66,7 +78,10 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: QuestionsAppBar(qweez: _questionnaire),
+      appBar: QuestionsAppBar(
+        qweez: _questionnaire,
+        questionIndex: _questionIndex,
+      ),
       body: _getBody(),
     );
   }
@@ -104,31 +119,20 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MyAnswerCard(
-                text: 'Answer 1',
-                isTrue: false,
-                animationController: _animationController,
-              ),
-              MyAnswerCard(
-                text: 'Answer 2',
-                isTrue: false,
-                animationController: _animationController,
-              ),
-              MyAnswerCard(
-                text: 'Answer 3',
-                isTrue: true,
-                animationController: _animationController,
-              ),
-              MyAnswerCard(
-                text: 'Answer 4 with a very long long long logn decscription,  a very long long long logn decscription',
-                isTrue: false,
-                animationController: _animationController,
-              ),
-            ],
-          ),
+          if (_questionnaire.questions[_questionIndex].answers.length == 1)
+            singleAnswer(_questionnaire.questions[_questionIndex].answers.first),
+          if (_questionnaire.questions[_questionIndex].answers.length != 1)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: _questionnaire.questions[_questionIndex].answers.map((answer) {
+                //TODO check pour avoir seulement une card qu'on peut selectionner
+                return MyAnswerCard(
+                  text: answer.answer,
+                  isTrue: answer.value!,
+                  animationController: _animationController,
+                );
+              }).toList(),
+            ),
           if (_isPresenter) _buildButtonPresenter(),
         ],
       ),
@@ -179,8 +183,8 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
                   ),
                 ),
                 context: context,
-                builder: (context) => SingleChildScrollView(
-                  controller: ModalScrollController.of(context),
+                builder: (context) => SizedBox(
+                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: paddingVertical,
@@ -200,28 +204,31 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
                             },
                           ),
                         ),
-                        GridView(
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.symmetric(vertical: paddingVertical, horizontal: paddingHorizontal),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: Responsive.isMobile(context)
-                                ? 1
-                                : Responsive.isTablet(context)
-                                    ? 2
-                                    : 3,
-                            mainAxisExtent: 70, // Card height (100) + Padding vertical
-                            crossAxisSpacing: paddingHorizontal,
-                            mainAxisSpacing: paddingVertical / 2,
-                          ),
-                          children: _listMembers.map((member) {
-                            int rank = _listMembers.indexOf(member);
+                        Expanded(
+                          child: GridView(
+                            shrinkWrap: true,
+                            padding:
+                                const EdgeInsets.symmetric(vertical: paddingVertical, horizontal: paddingHorizontal),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: Responsive.isMobile(context)
+                                  ? 1
+                                  : Responsive.isTablet(context)
+                                      ? 2
+                                      : 3,
+                              mainAxisExtent: 70, // Card height (100) + Padding vertical
+                              crossAxisSpacing: paddingHorizontal,
+                              mainAxisSpacing: paddingVertical / 2,
+                            ),
+                            children: _listMembers.map((member) {
+                              int rank = _listMembers.indexOf(member);
 
-                            return MyRankingCard(
-                              member: member,
-                              qweez: Qweez(questions: [], userId: '', name: '', description: '', isActive: false),
-                              rank: rank + 1,
-                            );
-                          }).toList(),
+                              return MyRankingCard(
+                                member: member,
+                                qweez: Qweez(questions: [], userId: '', name: '', description: '', isActive: false),
+                                rank: rank + 1,
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ],
                     ),
@@ -248,7 +255,15 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
             padding: const EdgeInsets.only(left: paddingVertical),
             child: ElevatedButton(
               onPressed: () {
-                //TODO
+                if (_questionIndex == (_questionnaire.questions.length - 1)) {
+                  Beamer.of(context).beamToNamed('/ranking');
+                } else {
+                  setState(() {
+                    _questionIndex++;
+                    _animationController.reset();
+                    _animationController.forward();
+                  });
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
@@ -269,5 +284,47 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
         ],
       ),
     );
+  }
+
+  Widget singleAnswer(Answer answer) {
+    String valueAnswer = '';
+
+    return AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, Widget? child) {
+          if (_animationController.isAnimating) {
+            return MyTextFormField(
+              valueText: valueAnswer,
+              hintText: 'Hurry to write your answer',
+              textInputAction: TextInputAction.done,
+              onChanged: (value) {
+                valueAnswer = value;
+              },
+            );
+          } else {
+            return Column(
+              children: [
+                Text(
+                  valueAnswer.toLowerCase() == answer.answer.toLowerCase()
+                      ? 'Correct, you were right, it was:'
+                      : 'Sorry but the right answer was:',
+                  style: TextStyle(
+                    fontSize: fontSizeText,
+                    fontWeight: FontWeight.w600,
+                    color: valueAnswer.toLowerCase() == answer.answer.toLowerCase() ? colorGreen : colorRed,
+                  ),
+                ),
+                Text(
+                  answer.answer,
+                  style: TextStyle(
+                    fontSize: fontSizeTitle,
+                    fontWeight: FontWeight.w600,
+                    color: valueAnswer.toLowerCase() == answer.answer.toLowerCase() ? colorGreen : colorRed,
+                  ),
+                ),
+              ],
+            );
+          }
+        });
   }
 }
