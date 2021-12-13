@@ -14,7 +14,7 @@ class MyTextFormField extends StatelessWidget {
 
   const MyTextFormField({
     Key? key,
-    required this.valueText,
+    this.valueText,
     required this.hintText,
     this.margin = paddingVertical / 2,
     this.backgroundColor = colorLightGreyForm,
