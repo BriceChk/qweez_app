@@ -29,7 +29,6 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   static User? user;
-  static double sizeNotificationBar = 0.0;
 
   const MyApp({Key? key}) : super(key: key);
 

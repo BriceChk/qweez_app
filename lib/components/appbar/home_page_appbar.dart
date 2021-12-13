@@ -18,7 +18,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
   }) : super(key: key);
 
   @override
-  Size get preferredSize => Size(double.infinity, kIsWeb ? 250 : 200 + MyApp.sizeNotificationBar);
+  Size get preferredSize => const Size(double.infinity, 250);
 
   @override
   Widget get child {
@@ -27,84 +27,81 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: paddingVertical),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                const Text(
-                  'Qweez',
-                  style: TextStyle(
-                    fontSize: fontSizeAppName,
-                    color: colorWhite,
-                    fontWeight: FontWeight.w900,
-                  ),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              const Text(
+                'Qweez',
+                style: TextStyle(
+                  fontSize: fontSizeAppName,
+                  color: colorWhite,
+                  fontWeight: FontWeight.w900,
                 ),
-                if (MyApp.user != null)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: PopupMenuButton<int>(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(borderRadius / 2),
-                        ),
+              ),
+              if (MyApp.user != null)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: PopupMenuButton<int>(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(borderRadius / 2),
                       ),
-                      itemBuilder: (BuildContext context) {
-                        return <PopupMenuEntry<int>>[
-                          const PopupMenuItem(
-                            value: 1,
-                            child: Text('Delete account'),
-                          ),
-                          const PopupMenuItem(
-                            value: 2,
-                            child: Text('Log out'),
-                          ),
-                          const PopupMenuItem(
-                            value: 3,
-                            child: Text('License informations'),
-                          ),
-                        ];
-                      },
-                      onSelected: (result) {
-                        switch (result) {
-                          // Case when we hit "delete account"
-                          case 1:
-                            showDeleteAccountConfirmation();
-                            break;
-                          // Case when we hit "Log out"
-                          case 2:
-                            FirebaseAuth.instance.signOut();
-                            break;
-                          // Case when we hit "license infos"
-                          case 3:
-                            showLicensePage(context: context, applicationName: 'Qweez');
-                        }
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(right: paddingHorizontal),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: paddingVertical / 3,
-                          horizontal: paddingHorizontal / 3,
+                    ),
+                    itemBuilder: (BuildContext context) {
+                      return <PopupMenuEntry<int>>[
+                        const PopupMenuItem(
+                          value: 1,
+                          child: Text('Delete account'),
                         ),
-                        decoration: const BoxDecoration(
-                          color: colorWhite,
-                          shape: BoxShape.circle,
+                        const PopupMenuItem(
+                          value: 2,
+                          child: Text('Log out'),
                         ),
-                        child: Text(
-                          MyApp.user!.email![0].toUpperCase() + MyApp.user!.email![1],
-                          style: const TextStyle(
-                            fontSize: fontSizeSubtitle,
-                          ),
+                        const PopupMenuItem(
+                          value: 3,
+                          child: Text('License informations'),
+                        ),
+                      ];
+                    },
+                    onSelected: (result) {
+                      switch (result) {
+                        // Case when we hit "delete account"
+                        case 1:
+                          showDeleteAccountConfirmation();
+                          break;
+                        // Case when we hit "Log out"
+                        case 2:
+                          FirebaseAuth.instance.signOut();
+                          break;
+                        // Case when we hit "license infos"
+                        case 3:
+                          showLicensePage(context: context, applicationName: 'Qweez');
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: paddingHorizontal),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: paddingVertical / 3,
+                        horizontal: paddingHorizontal / 3,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: colorWhite,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        MyApp.user!.email![0].toUpperCase() + MyApp.user!.email![1],
+                        style: const TextStyle(
+                          fontSize: fontSizeSubtitle,
                         ),
                       ),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
           // Scanning and enter code + title container
           Container(
-            margin: const EdgeInsets.only(top: paddingVertical),
+            margin: const EdgeInsets.only(top: paddingVertical + 5),
             padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical),
             decoration: const BoxDecoration(
               color: colorBlue,
@@ -129,7 +126,6 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                     Expanded(
                       child: MyTextFormField(
                         hintText: 'Enter a code',
-                        valueText: null,
                         margin: paddingVertical,
                         backgroundColor: colorWhite,
                         textInputAction: TextInputAction.done,

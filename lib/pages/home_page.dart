@@ -76,33 +76,36 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    MyApp.sizeNotificationBar = MediaQuery.of(context).padding.top;
-
     _getData();
 
-    return Scaffold(
-      appBar: HomePageAppBar(
-        onTap: () {
-          _showQrCodeDialog(context);
-        },
-        showDeleteAccountConfirmation: _showDeleteAccountConfirmation,
-        context: context,
+    return Container(
+      color: colorBlue,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: HomePageAppBar(
+            onTap: () {
+              _showQrCodeDialog(context);
+            },
+            showDeleteAccountConfirmation: _showDeleteAccountConfirmation,
+            context: context,
+          ),
+          body: _getBody(),
+          floatingActionButton: _loggedIn
+              ? FloatingActionButton(
+                  backgroundColor: colorYellow,
+                  onPressed: () {
+                    Beamer.of(context).beamToNamed('/creationQuestionnaire');
+                  },
+                  tooltip: 'Create a Qweez',
+                  child: const Icon(
+                    Icons.add,
+                    color: colorBlack,
+                    size: 30,
+                  ),
+                )
+              : null,
+        ),
       ),
-      body: _getBody(),
-      floatingActionButton: _loggedIn
-          ? FloatingActionButton(
-              backgroundColor: colorYellow,
-              onPressed: () {
-                Beamer.of(context).beamToNamed('/creationQuestionnaire');
-              },
-              tooltip: 'Create a Qweez',
-              child: const Icon(
-                Icons.add,
-                color: colorBlack,
-                size: 30,
-              ),
-            )
-          : null,
     );
   }
 

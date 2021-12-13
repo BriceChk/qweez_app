@@ -1,7 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/qweez.dart';
 
 class QuestionsAppBar extends StatelessWidget implements PreferredSize {
@@ -15,7 +14,7 @@ class QuestionsAppBar extends StatelessWidget implements PreferredSize {
   }) : super(key: key);
 
   @override
-  Size get preferredSize => Size(double.infinity, 150 + MyApp.sizeNotificationBar);
+  Size get preferredSize => const Size(double.infinity, 150);
 
   @override
   Widget get child => Container(
