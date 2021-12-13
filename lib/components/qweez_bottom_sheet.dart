@@ -33,77 +33,87 @@ class QweezBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: paddingHorizontal / 2),
-              child: InkWell(
-                highlightColor: colorBlue.withOpacity(0.1),
-                splashColor: colorBlue.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(borderRadius),
-                onTap: () {
-                  Beamer.of(context).beamToNamed('/editQuestionnaire/${qweez.id!}');
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2, horizontal: paddingHorizontal / 2),
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.edit,
-                        color: colorBlue,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: paddingHorizontal / 2),
-                        child: Text(
-                          'Edit the Qweez',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: fontSizeSubtitle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            QweezOption(
+              text: 'Start',
+              icon: const Icon(
+                Icons.play_circle_fill_rounded,
+                color: colorYellow,
               ),
+              onTap: () {
+                Navigator.pop(context);
+                showPickUsername(context, qweez.id!);
+              },
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: paddingHorizontal / 2,
+            QweezOption(
+              text: 'Edit',
+              icon: const Icon(
+                Icons.edit,
+                color: colorBlue,
               ),
-              child: InkWell(
-                highlightColor: colorYellow.withOpacity(0.1),
-                splashColor: colorYellow.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(borderRadius),
-                onTap: () {
-                  Navigator.pop(context);
-                  showPickUsername(context, qweez.id!);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: paddingVertical / 2,
-                    horizontal: paddingHorizontal / 2,
-                  ),
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: colorYellow,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: paddingHorizontal / 2),
-                        child: Text(
-                          'Start the Qweez',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: fontSizeSubtitle,
-                          ),
-                        ),
-                      ),
-                    ],
+              onTap: () {
+                Beamer.of(context).beamToNamed('/editQuestionnaire/${qweez.id!}');
+              },
+            ),
+            QweezOption(
+              text: 'Delete',
+              icon: const Icon(
+                Icons.delete,
+                color: colorRed,
+              ),
+              onTap: () {
+                //TODO
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class QweezOption extends StatelessWidget {
+  const QweezOption({
+    Key? key,
+    required this.icon,
+    required this.text,
+    required this.onTap,
+  }) : super(key: key);
+
+  final Icon icon;
+  final String text;
+  final GestureTapCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: paddingHorizontal / 2,
+      ),
+      child: InkWell(
+        highlightColor: colorYellow.withOpacity(0.1),
+        splashColor: colorYellow.withOpacity(0.25),
+        borderRadius: BorderRadius.circular(borderRadius),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: paddingVertical / 2,
+            horizontal: paddingHorizontal / 2,
+          ),
+          child: Row(
+            children: [
+              icon,
+              Padding(
+                padding: const EdgeInsets.only(left: paddingHorizontal / 2),
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: fontSizeSubtitle,
                   ),
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
