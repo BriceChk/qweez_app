@@ -6,19 +6,19 @@ import 'package:qweez_app/components/form/my_text_form_field_complete.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/models/question.dart';
 
-class CreationAnswerPage extends StatefulWidget {
+class EditQuestionPage extends StatefulWidget {
   final Question question;
 
-  const CreationAnswerPage({
+  const EditQuestionPage({
     Key? key,
     required this.question,
   }) : super(key: key);
 
   @override
-  State<CreationAnswerPage> createState() => _CreationAnswerPageState();
+  State<EditQuestionPage> createState() => _EditQuestionPageState();
 }
 
-class _CreationAnswerPageState extends State<CreationAnswerPage> {
+class _EditQuestionPageState extends State<EditQuestionPage> {
   final _formKey = GlobalKey<FormState>();
   final List<String> _listExampleQuestion = ['What is the capital of ...', 'When does the ...', 'Wo was the first ...'];
   final List<String> _listAnswersDropDown4 = ['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4'];
@@ -29,10 +29,13 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.question.type.isEmpty) {
       widget.question.type = listDropDownValue.last;
       _listDropDown = _listAnswersDropDown4;
       _correctAnswerSelected = _listAnswersDropDown4.first;
+      widget.question.answers.first.isGoodAnswer = true;
     } else {
       // Set the listDropDown according to the one selected before (in the database)
       if (widget.question.type == listDropDownValue.last) {
@@ -41,7 +44,7 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
         _listDropDown = _listAnswersDropDown2;
       }
 
-      int index = widget.question.answers.indexWhere((answer) => answer.value!);
+      int index = widget.question.answers.indexWhere((answer) => answer.isGoodAnswer);
       switch (index) {
         case 0:
           _correctAnswerSelected = _listAnswersDropDown4.first;
@@ -56,14 +59,6 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
           _correctAnswerSelected = _listAnswersDropDown4[3];
       }
     }
-    // If only the question is a new one and no answer was created before we add the default one
-    if (widget.question.answers.isEmpty) {
-      // Create 4 answer as a starter
-      while (widget.question.answers.length < 4) {
-        widget.question.answers.add(Answer(answer: ''));
-      }
-    }
-    super.initState();
   }
 
   @override
@@ -80,7 +75,7 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
         ),
         centerTitle: true,
         title: const Text(
-          'Create an answer',
+          'Create a question',
         ),
       ),
       body: SingleChildScrollView(
@@ -112,37 +107,35 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
             value: widget.question.type,
             itemsList: listDropDownValue,
             onChanged: (String? choice) {
-              setState(
-                () {
-                  widget.question.type = choice!;
+              setState(() {
+                widget.question.type = choice!;
 
-                  if (widget.question.type == listDropDownValue.last) {
-                    _listDropDown = _listAnswersDropDown4;
-                    // add the number of answer according to the choice selected
-                    while (widget.question.answers.length < 4) {
-                      widget.question.answers.add(Answer(answer: ''));
-                    }
-                  } else if (widget.question.type == listDropDownValue[1]) {
-                    _listDropDown = _listAnswersDropDown2;
-                    // remove the last 2 answer if it was a 4 answers before
-                    if (widget.question.answers.length == 4) {
-                      while (widget.question.answers.length != 2) {
-                        widget.question.answers.removeLast();
-                      }
-                    }
-
-                    // add the number of answer according to the choice selected
+                if (widget.question.type == listDropDownValue.last) {
+                  _listDropDown = _listAnswersDropDown4;
+                  // add the number of answer according to the choice selected
+                  while (widget.question.answers.length < 4) {
+                    widget.question.answers.add(Answer(answer: ''));
+                  }
+                } else if (widget.question.type == listDropDownValue[1]) {
+                  _listDropDown = _listAnswersDropDown2;
+                  // remove the last 2 answer if it was a 4 answers before
+                  if (widget.question.answers.length == 4) {
                     while (widget.question.answers.length != 2) {
-                      widget.question.answers.add(Answer(answer: ''));
-                    }
-                  } else {
-                    while (widget.question.answers.length != 1) {
                       widget.question.answers.removeLast();
                     }
-                    widget.question.answers.first.value = true;
                   }
-                },
-              );
+
+                  // add the number of answer according to the choice selected
+                  while (widget.question.answers.length != 2) {
+                    widget.question.answers.add(Answer(answer: ''));
+                  }
+                } else {
+                  while (widget.question.answers.length != 1) {
+                    widget.question.answers.removeLast();
+                  }
+                  widget.question.answers.first.isGoodAnswer = true;
+                }
+              });
             },
           ),
           _buildAnswers(),
@@ -154,21 +147,23 @@ class _CreationAnswerPageState extends State<CreationAnswerPage> {
               itemsList: _listDropDown,
               onChanged: (value) {
                 // Set all the value to false before selecting the new one
-                widget.question.answers.every((answer) => answer.value = false);
+                for (var answer in widget.question.answers) {
+                  answer.isGoodAnswer = false;
+                }
 
                 if (value == 'Answer 1') {
-                  widget.question.answers.first.value = true;
+                  widget.question.answers.first.isGoodAnswer = true;
                 } else if (value == 'Answer 2') {
-                  widget.question.answers[1].value = true;
+                  widget.question.answers[1].isGoodAnswer = true;
                 } else if (value == 'Answer 3' && widget.question.type == listDropDownValue.last) {
-                  widget.question.answers[2].value = true;
+                  widget.question.answers[2].isGoodAnswer = true;
                 } else {
-                  widget.question.answers[3].value = true;
+                  widget.question.answers[3].isGoodAnswer = true;
                 }
               },
             ),
           MyTextFormFieldComplete(
-            titleText: 'Time to answer',
+            titleText: 'Time to answer (seconds)',
             valueText: widget.question.time.toString(),
             hintText: "By default it is 10 seconds",
             textInputAction: TextInputAction.done,

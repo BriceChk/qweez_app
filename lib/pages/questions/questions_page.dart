@@ -127,7 +127,7 @@ class _QuestionpageState extends State<Questionpage> with SingleTickerProviderSt
                 //TODO check pour avoir seulement une card qu'on peut selectionner
                 return MyAnswerCard(
                   text: answer.answer,
-                  isTrue: answer.value!,
+                  isTrue: answer.isGoodAnswer,
                   animationController: _animationController,
                 );
               }).toList(),

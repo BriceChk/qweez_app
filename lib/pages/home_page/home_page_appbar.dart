@@ -6,14 +6,12 @@ import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSize {
-  final Function() onTap;
-  final Function() showDeleteAccountConfirmation;
+  final Function() onQrCodeTap;
   final BuildContext context;
 
   const HomePageAppBar({
     Key? key,
-    required this.onTap,
-    required this.showDeleteAccountConfirmation,
+    required this.onQrCodeTap,
     required this.context,
   }) : super(key: key);
 
@@ -67,7 +65,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                       switch (result) {
                         // Case when we hit "delete account"
                         case 1:
-                          showDeleteAccountConfirmation();
+                          _showDeleteAccountConfirmation();
                           break;
                         // Case when we hit "Log out"
                         case 2:
@@ -146,7 +144,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                           color: colorBlack,
                           child: InkWell(
                             borderRadius: BorderRadius.circular(50),
-                            onTap: onTap,
+                            onTap: onQrCodeTap,
                             highlightColor: Colors.transparent,
                             splashColor: colorWhite.withOpacity(0.25),
                             child: const Padding(
@@ -173,5 +171,58 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
   @override
   Widget build(BuildContext context) {
     return child;
+  }
+
+  Future<void> _showDeleteAccountConfirmation() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius / 1.5),
+          ),
+          title: const Text('Do you want to delete your account?'),
+          actions: <Widget>[
+            TextButton(
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.all(
+                  colorBlue.withOpacity(0.15),
+                ),
+              ),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: fontSizeText,
+                  color: colorBlue,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.all(
+                  colorRed.withOpacity(0.15),
+                ),
+              ),
+              child: const Text(
+                'Delete',
+                style: TextStyle(
+                  fontSize: fontSizeText,
+                  color: colorRed,
+                ),
+              ),
+              onPressed: () {
+                FirebaseAuth.instance.currentUser!.delete();
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

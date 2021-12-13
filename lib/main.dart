@@ -1,16 +1,15 @@
+import 'package:beamer/beamer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:qweez_app/pages/creation_questionnaire/creation_edition_questionnaire.dart';
-import 'package:qweez_app/pages/home_page.dart';
+import 'package:qweez_app/pages/qweez_edit/edit_qweez_page.dart';
+import 'package:qweez_app/pages/home_page/home_page.dart';
 import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/login_page.dart';
 import 'package:qweez_app/pages/questions/questions_page.dart';
-import 'package:beamer/beamer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qweez_app/pages/questions/questions_presenter_waiting_page.dart';
-import 'package:qweez_app/pages/ranking_page.dart';
 
 import 'firebase_options.dart';
 
@@ -59,47 +58,48 @@ class _MyAppState extends State<MyApp> {
               key: ValueKey('launch'),
               child: LaunchPage(),
             ),
-        '/editQuestionnaire/:questionnaireId': (context, state, data) {
-          final questionnaireId = state.pathParameters['questionnaireId']!;
-          return BeamPage(
-            key: ValueKey('editQuestionnaire-$questionnaireId'),
-            type: BeamPageType.cupertino,
-            child: EditQweezPage(questionnaireId: questionnaireId),
-          );
-        },
-        '/creationQuestionnaire': (context, state, data) => const BeamPage(
-              key: ValueKey('creationQuestionnaire'),
+        '/create-qweez': (context, state, data) => const BeamPage(
+              key: ValueKey('create-qweez'),
               child: EditQweezPage(),
               type: BeamPageType.cupertino,
             ),
-        '/question/:questionnaireId': (context, state, data) {
-          final questionnaireId = state.pathParameters['questionnaireId']!;
+        '/qweez/:qweezId/edit': (context, state, data) {
+          final qweezId = state.pathParameters['qweezId']!;
           return BeamPage(
-            key: ValueKey('question-$questionnaireId'),
+            key: ValueKey('qweez-edit-$qweezId'),
+            type: BeamPageType.cupertino,
+            child: EditQweezPage(qweezId: qweezId),
+          );
+        },
+        '/qweez/:qweezId/present': (context, state, data) {
+          final qweezId = state.pathParameters['qweezId']!;
+          return BeamPage(
+            key: ValueKey('qweez-present-$qweezId'),
+            child: QuestionsPresenterWaitingPage(
+              qweezId: qweezId,
+            ),
+            type: BeamPageType.cupertino,
+          );
+        },
+        '/qweez/:qweezId/play': (context, state, data) {
+          final qweezId = state.pathParameters['qweezId']!;
+          return BeamPage(
+            key: ValueKey('qweez-play-$qweezId'),
             child: const Questionpage(),
             type: BeamPageType.cupertino,
           );
         },
-        '/questionPresenterWaiting/:questionnaireId/:username': (context, state, data) {
-          final questionnaireId = state.pathParameters['questionnaireId']!;
-          final username = state.pathParameters['username']!;
+        '/play/:code': (context, state, data) {
+          final code = state.pathParameters['code']!;
           return BeamPage(
-            key: ValueKey('questionPresenterWaiting-$questionnaireId-$username'),
-            child: QuestionsPresenterWaitingPage(
-              questionnaireId: questionnaireId,
-              username: username,
-            ),
+            key: ValueKey('qweez-join-$code'),
+            child: const Questionpage(),
             type: BeamPageType.cupertino,
           );
         },
         '/login': (context, state, data) => const BeamPage(
               key: ValueKey('login'),
               child: LoginPage(),
-              type: BeamPageType.cupertino,
-            ),
-        '/ranking': (context, state, data) => const BeamPage(
-              key: ValueKey('ranking'),
-              child: RankingPage(),
               type: BeamPageType.cupertino,
             ),
       },

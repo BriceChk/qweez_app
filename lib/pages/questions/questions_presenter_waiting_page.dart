@@ -1,25 +1,21 @@
-import 'package:flutter/cupertino.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
-import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/responsive.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:beamer/beamer.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
 class QuestionsPresenterWaitingPage extends StatefulWidget {
-  final String username;
-  final String questionnaireId;
+  final String qweezId;
 
   const QuestionsPresenterWaitingPage({
     Key? key,
-    required this.username,
-    required this.questionnaireId,
+    required this.qweezId,
   }) : super(key: key);
 
   @override
@@ -27,7 +23,7 @@ class QuestionsPresenterWaitingPage extends StatefulWidget {
 }
 
 class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitingPage> {
-  final _questionnaireRepository = QuestionnaireRepository();
+  final _questionnaireRepository = QweezRepository();
 
   Qweez? _questionnaire;
 
@@ -44,13 +40,13 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
   }
 
   Future<void> _getData() async {
-    _questionnaire = await _questionnaireRepository.get(widget.questionnaireId);
+    _questionnaire = await _questionnaireRepository.get(widget.qweezId);
 
     setState(() {
       // TODO check pour mettre la bdd en accord + mettre isActive à true
-      _questionnaire!.players.add(
-        Player(userName: widget.username),
-      );
+      // _questionnaire!.players.add(
+      //   Player(userName: widget.username),
+      // );
     });
   }
 
@@ -155,7 +151,7 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
             child: ElevatedButton(
               style: ButtonStyle(backgroundColor: MaterialStateProperty.all(colorYellow)),
               onPressed: () {
-                Beamer.of(context).beamToNamed('/question/${widget.questionnaireId}');
+                Beamer.of(context).beamToNamed('/question/${widget.qweezId}');
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
@@ -195,7 +191,7 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                widget.questionnaireId.substring(0, 5),
+                widget.qweezId.substring(0, 5),
                 style: const TextStyle(
                   fontSize: fontSizeTitle,
                 ),
@@ -204,7 +200,7 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
                 width: size,
                 height: size,
                 child: QrImage(
-                  data: "QweezApp-${widget.questionnaireId}",
+                  data: "QweezApp-${widget.qweezId}",
                   version: QrVersions.auto,
                   size: size,
                 ),

@@ -2,6 +2,8 @@ import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/question.dart';
 
 class Qweez {
+  static const String dbCollectionName = 'qweez';
+
   static const String dbId = 'id';
   static const String dbUserId = 'userId';
   static const String dbName = 'name';
@@ -9,7 +11,7 @@ class Qweez {
   static const String dbQuestions = 'questions';
   static const String dbPlayers = 'players';
 
-  String? id = '';
+  String? id;
   String name = '';
   String description = '';
   String userId = '';
@@ -26,6 +28,8 @@ class Qweez {
   }) {
     this.players = players ?? [];
   }
+
+  Qweez.empty({required this.userId});
 
   Qweez.fromJson(Map<String, dynamic> json) {
     id = json[dbId];

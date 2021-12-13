@@ -16,6 +16,10 @@ class Question {
     required this.time,
   });
 
+  Question.empty() {
+    answers = [Answer(), Answer(), Answer(), Answer()];
+  }
+
   Question.fromJson(Map<String, dynamic> json) {
     question = json[dbQuestion];
     type = json[dbType];
@@ -33,23 +37,23 @@ class Question {
 
 class Answer {
   static const String dbAnswer = "answer";
-  static const String dbValue = "value";
+  static const String dbValue = "isGoodAnswer";
 
   String answer = '';
-  bool? value = false;
+  bool isGoodAnswer = false;
 
   Answer({
-    required this.answer,
-    this.value = false,
+    this.answer = '',
+    this.isGoodAnswer = false,
   });
 
   Answer.fromJson(Map<String, dynamic> json) {
     answer = json[dbAnswer];
-    value = json[dbValue];
+    isGoodAnswer = json[dbValue];
   }
 
   Map<String, dynamic> toJson() => {
         dbAnswer: answer,
-        dbValue: value,
+        dbValue: isGoodAnswer,
       };
 }

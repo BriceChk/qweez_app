@@ -6,13 +6,13 @@ import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/question.dart';
 import 'package:qweez_app/models/qweez.dart';
-import 'package:qweez_app/pages/creation_questionnaire/creation_edition_answer.dart';
+import 'package:qweez_app/pages/qweez_edit/edit_question_page.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 
 class EditQweezPage extends StatefulWidget {
-  final String? questionnaireId;
+  final String? qweezId;
 
-  const EditQweezPage({Key? key, this.questionnaireId}) : super(key: key);
+  const EditQweezPage({Key? key, this.qweezId}) : super(key: key);
 
   @override
   State<EditQweezPage> createState() => _EditQweezPageState();
@@ -20,35 +20,23 @@ class EditQweezPage extends StatefulWidget {
 
 class _EditQweezPageState extends State<EditQweezPage> {
   final _formKey = GlobalKey<FormState>();
-  final _questionnaireRepository = QuestionnaireRepository();
-  Qweez? _questionnaire;
+  final _qweezRepo = QweezRepository();
 
-  final List<Question> _listQuestion = [];
-
-  late final String _userId;
-  String _name = '', _description = '';
+  late Qweez _qweez;
 
   @override
   void initState() {
     super.initState();
-    _userId = MyApp.user!.uid;
 
-    if (widget.questionnaireId != null) {
-      _getData();
-    }
-  }
-
-  Future<void> _getData() async {
-    _questionnaireRepository.get(widget.questionnaireId!).then((value) {
-      setState(() {
-        _questionnaire = value;
-        _name = _questionnaire!.name;
-        _description = _questionnaire!.description;
-        for (var question in _questionnaire!.questions) {
-          _listQuestion.add(question);
-        }
+    if (widget.qweezId != null) {
+      _qweezRepo.get(widget.qweezId!).then((value) {
+        setState(() {
+          _qweez = value;
+        });
       });
-    });
+    } else {
+      _qweez = Qweez.empty(userId: MyApp.user!.uid);
+    }
   }
 
   @override
@@ -81,29 +69,28 @@ class _EditQweezPageState extends State<EditQweezPage> {
               children: [
                 MyTextFormFieldComplete(
                   titleText: 'Name of the Qweez',
-                  valueText: _name,
+                  valueText: _qweez.name,
                   hintText: 'Name',
                   required: true,
                   validator: (String? name) {
                     return name!.isEmpty ? 'Please enter a name' : null;
                   },
-                  onChanged: (String name) => _name = name,
+                  onChanged: (String name) => _qweez.name = name,
                 ),
                 MyTextFormFieldComplete(
                   titleText: 'Description',
-                  valueText: _description,
+                  valueText: _qweez.description,
                   hintText: 'This is a Qweez to learn...',
                   required: true,
                   validator: (String? description) {
                     return description!.isEmpty ? 'Please enter a description' : null;
                   },
-                  onChanged: (String description) => _description = description,
+                  onChanged: (String description) => _qweez.description = description,
                 ),
                 Column(
-                  children: _listQuestion.map((question) {
-                    int index = _listQuestion.indexWhere((thisQuestion) => question == thisQuestion);
-
-                    return _buildQuestion(index);
+                  children: _qweez.questions.map((question) {
+                    var index = _qweez.questions.indexOf(question);
+                    return _buildQuestion(question, index);
                   }).toList(),
                 ),
                 SizedBox(
@@ -114,9 +101,18 @@ class _EditQweezPageState extends State<EditQweezPage> {
                       'Add a question',
                     ),
                     onPressed: () {
+                      // Create question and edit it immediatly
                       setState(() {
-                        _listQuestion.add(Question(question: '', type: '', answers: [], time: 10));
+                        _qweez.questions.add(Question.empty());
                       });
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => EditQuestionPage(
+                            question: _qweez.questions.last,
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -131,17 +127,12 @@ class _EditQweezPageState extends State<EditQweezPage> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          final questionnaire = Qweez(
-                            name: _name,
-                            description: _description,
-                            questions: _listQuestion,
-                            userId: _userId,
-                          );
-                          /*if (widget.questionnaireId != null) {
-                            await questionnaireRepository.updateQuestionnaire(questionnaire);
-                          } else {*/
-                          await _questionnaireRepository.add(questionnaire);
-                          //}
+                          if (_qweez.id != null) {
+                            await _qweezRepo.update(_qweez);
+                          } else {
+                            await _qweezRepo.add(_qweez);
+                          }
+
                           Beamer.of(context).beamBack();
                         }
                       },
@@ -156,7 +147,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
     );
   }
 
-  Widget _buildQuestion(int index) {
+  Widget _buildQuestion(Question q, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: paddingVertical),
       child: Row(
@@ -173,9 +164,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.only(left: paddingHorizontal),
                   child: Text(
-                    _listQuestion[index].question.isEmpty
-                        ? 'Question ' + (index + 1).toString()
-                        : _listQuestion[index].question,
+                    q.question.isEmpty ? 'Question ' + (index + 1).toString() : q.question,
                     style: const TextStyle(
                       color: colorDarkGray,
                     ),
@@ -186,8 +175,8 @@ class _EditQweezPageState extends State<EditQweezPage> {
                 Navigator.push(
                   context,
                   CupertinoPageRoute(
-                    builder: (context) => CreationAnswerPage(
-                      question: _listQuestion[index],
+                    builder: (context) => EditQuestionPage(
+                      question: q,
                     ),
                   ),
                 );
@@ -211,7 +200,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
               ),
               onTap: () {
                 setState(() {
-                  _listQuestion.removeAt(index);
+                  _qweez.questions.remove(q);
                 });
               },
             ),

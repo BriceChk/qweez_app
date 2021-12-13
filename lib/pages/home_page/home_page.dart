@@ -1,15 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:glassmorphism/glassmorphism.dart';
 import 'package:beamer/beamer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:qweez_app/components/appbar/home_page_appbar.dart';
 import 'package:qweez_app/components/cards/qweez_card.dart';
 import 'package:qweez_app/components/choose_playername_modal.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/qweez.dart';
+import 'package:qweez_app/pages/home_page/home_page_appbar.dart';
 import 'package:qweez_app/pages/responsive.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 
@@ -21,7 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  final _questionnaireRepository = QuestionnaireRepository();
+  final _questionnaireRepository = QweezRepository();
 
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? _result;
@@ -29,7 +27,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
 
-  List<Qweez> _listQuestionnaire = [];
+  List<Qweez> _qweezList = [];
 
   bool get _loggedIn => MyApp.user != null;
   var _isLoaded = false;
@@ -67,7 +65,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     if (_loggedIn) {
       _questionnaireRepository.getUserQweezes(MyApp.user!.uid).then((value) {
         setState(() {
-          _listQuestionnaire = value;
+          _qweezList = value;
           _isLoaded = true;
         });
       });
@@ -83,10 +81,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       child: SafeArea(
         child: Scaffold(
           appBar: HomePageAppBar(
-            onTap: () {
+            onQrCodeTap: () {
               _showQrCodeDialog(context);
             },
-            showDeleteAccountConfirmation: _showDeleteAccountConfirmation,
             context: context,
           ),
           body: _getBody(),
@@ -94,7 +91,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ? FloatingActionButton(
                   backgroundColor: colorYellow,
                   onPressed: () {
-                    Beamer.of(context).beamToNamed('/creationQuestionnaire');
+                    Beamer.of(context).beamToNamed('/create-qweez');
                   },
                   tooltip: 'Create a Qweez',
                   child: const Icon(
@@ -117,7 +114,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           Expanded(
             child: SingleChildScrollView(
               child: Align(
-                alignment: _loggedIn && _listQuestionnaire.isEmpty ? Alignment.center : Alignment.topCenter,
+                alignment: _loggedIn && _qweezList.isEmpty ? Alignment.center : Alignment.topCenter,
                 child: _buildContent(),
               ),
             ),
@@ -130,18 +127,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget _buildContent() {
     if (_loggedIn) {
       if (_isLoaded) {
-        return _listQuestionnaire.isEmpty ? noQuestionnaireContent() : loggedContent(_listQuestionnaire);
+        return _qweezList.isEmpty ? _noQweezContent() : _loggedInContent(_qweezList);
       } else {
         return CircularProgressIndicator(
           valueColor: _colorTween,
         );
       }
     } else {
-      return loginContent();
+      return _notLoggedInContent();
     }
   }
 
-  Widget noQuestionnaireContent() {
+  Widget _noQweezContent() {
     return const Padding(
       padding: EdgeInsets.symmetric(
         vertical: paddingVertical,
@@ -158,7 +155,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget loggedContent(List<Qweez> listQuestionnaire) {
+  Widget _loggedInContent(List<Qweez> listQuestionnaire) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal),
       child: Column(
@@ -199,7 +196,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget loginContent() {
+  Widget _notLoggedInContent() {
     final List<Qweez> _listFakeQuestionnaire = [
       for (var i = 0; i < 3; i++)
         Qweez(
@@ -359,59 +356,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         controller.resumeCamera();
       });
     });
-  }
-
-  Future<void> _showDeleteAccountConfirmation() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius / 1.5),
-          ),
-          title: const Text('Do you want to delete your account?'),
-          actions: <Widget>[
-            TextButton(
-              style: ButtonStyle(
-                overlayColor: MaterialStateProperty.all(
-                  colorBlue.withOpacity(0.15),
-                ),
-              ),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  fontSize: fontSizeText,
-                  color: colorBlue,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: ButtonStyle(
-                overlayColor: MaterialStateProperty.all(
-                  colorRed.withOpacity(0.15),
-                ),
-              ),
-              child: const Text(
-                'Delete',
-                style: TextStyle(
-                  fontSize: fontSizeText,
-                  color: colorRed,
-                ),
-              ),
-              onPressed: () {
-                FirebaseAuth.instance.currentUser!.delete();
-                FirebaseAuth.instance.signOut();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override

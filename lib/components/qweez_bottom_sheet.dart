@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:qweez_app/components/choose_playername_modal.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/models/qweez.dart';
+import 'package:qweez_app/repository/questionnaire_repository.dart';
 
 class QweezBottomSheet extends StatelessWidget {
   final Qweez qweez;
+  final QweezRepository _qweezRepo = QweezRepository();
 
-  const QweezBottomSheet({Key? key, required this.qweez}) : super(key: key);
+  QweezBottomSheet({Key? key, required this.qweez}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,24 +28,37 @@ class QweezBottomSheet extends StatelessWidget {
                 right: paddingHorizontal,
               ),
               child: Text(
-                'Qweez: ${qweez.name}',
+                qweez.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: fontSizeSubtitle,
                 ),
               ),
             ),
-            QweezOption(
-              text: 'Start',
-              icon: const Icon(
-                Icons.play_circle_fill_rounded,
-                color: colorYellow,
+            if (qweez.questions.isNotEmpty)
+              QweezOption(
+                text: 'Play alone',
+                icon: const Icon(
+                  Icons.play_circle_fill_rounded,
+                  color: colorYellow,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  showPickUsername(context, qweez.id!);
+                },
               ),
-              onTap: () {
-                Navigator.pop(context);
-                showPickUsername(context, qweez.id!);
-              },
-            ),
+            if (qweez.questions.isNotEmpty)
+              QweezOption(
+                text: 'Present online',
+                icon: const Icon(
+                  Icons.qr_code,
+                  color: colorYellow,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  showPickUsername(context, qweez.id!);
+                },
+              ),
             QweezOption(
               text: 'Edit',
               icon: const Icon(
@@ -51,7 +66,8 @@ class QweezBottomSheet extends StatelessWidget {
                 color: colorBlue,
               ),
               onTap: () {
-                Beamer.of(context).beamToNamed('/editQuestionnaire/${qweez.id!}');
+                Navigator.pop(context);
+                Beamer.of(context).beamToNamed('/qweez/${qweez.id!}/edit');
               },
             ),
             QweezOption(
@@ -61,12 +77,65 @@ class QweezBottomSheet extends StatelessWidget {
                 color: colorRed,
               ),
               onTap: () {
-                //TODO
+                _showDeleteConfirmation(context);
               },
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    Navigator.pop(context);
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius / 1.5),
+          ),
+          title: Text("Do you want to delete the Qweez '${qweez.name}' ?"),
+          actions: <Widget>[
+            TextButton(
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.all(
+                  colorBlue.withOpacity(0.15),
+                ),
+              ),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: fontSizeText,
+                  color: colorBlue,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.all(
+                  colorRed.withOpacity(0.15),
+                ),
+              ),
+              child: const Text(
+                'Delete',
+                style: TextStyle(
+                  fontSize: fontSizeText,
+                  color: colorRed,
+                ),
+              ),
+              onPressed: () {
+                _qweezRepo.remove(qweez);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
