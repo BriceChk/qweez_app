@@ -1,24 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:qweez_app/components/choose_playername_modal.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
 import 'package:qweez_app/constants/constants.dart';
 import 'package:qweez_app/main.dart';
-import 'package:qweez_app/models/qweez.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSize {
   final Function() onTap;
   final Function() showDeleteAccountConfirmation;
   final BuildContext context;
-  final List<Qweez> listQweez;
 
   const HomePageAppBar({
     Key? key,
     required this.onTap,
     required this.showDeleteAccountConfirmation,
     required this.context,
-    required this.listQweez,
   }) : super(key: key);
 
   @override
@@ -63,19 +59,25 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                             value: 2,
                             child: Text('Log out'),
                           ),
+                          const PopupMenuItem(
+                            value: 3,
+                            child: Text('License informations'),
+                          ),
                         ];
                       },
                       onSelected: (result) {
                         switch (result) {
                           // Case when we hit "delete account"
                           case 1:
-                            //TODO
                             showDeleteAccountConfirmation();
                             break;
                           // Case when we hit "Log out"
                           case 2:
                             FirebaseAuth.instance.signOut();
                             break;
+                          // Case when we hit "license infos"
+                          case 3:
+                            showLicensePage(context: context, applicationName: 'Qweez');
                         }
                       },
                       child: Container(
@@ -133,10 +135,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                         textInputAction: TextInputAction.done,
                         onChanged: (value) async {
                           if (value.length == 5) {
-                            int index = listQweez.indexWhere((element) => element.id!.startsWith(value));
-                            if (index != -1) {
-                              showPickUsername(context, listQweez[index].id!);
-                            }
+                            //TODO Aller sur la page de join quiz
                           }
                         },
                       ),

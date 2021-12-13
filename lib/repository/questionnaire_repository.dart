@@ -47,28 +47,4 @@ class QuestionnaireRepository {
 
     return Qweez.fromJson(data);
   }
-
-  Future<List<Qweez>> getAllActive() async {
-    List<Qweez> qweezList = [];
-
-    var res = await FirebaseFirestore.instance.collection(dbName).where(Qweez.dbIsActive, isEqualTo: true).get();
-
-    if (res.size == 0) {
-      return [];
-    }
-
-    // Loop through the data to format them
-    for (var doc in res.docs) {
-      Map<String, dynamic> data = doc.data();
-
-      var newEntries = {
-        Qweez.dbId: doc.id,
-      };
-
-      data.addAll(newEntries);
-      qweezList.add(Qweez.fromJson(data));
-    }
-
-    return qweezList;
-  }
 }

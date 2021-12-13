@@ -72,7 +72,7 @@ class RankingPage extends StatelessWidget {
 
                     return MyRankingCard(
                       member: member,
-                      qweez: Qweez(questions: [], userId: '', name: '', description: '', isActive: false),
+                      qweez: Qweez(questions: [], userId: '', name: '', description: ''),
                       rank: rank + 1,
                     );
                   }).toList(),
