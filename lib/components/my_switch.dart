@@ -8,7 +8,6 @@ class MySwitch extends StatefulWidget {
   final Color activeColor;
   final Color inactiveColor;
 
-
   const MySwitch({
     Key? key,
     required this.onChanged,
@@ -31,8 +30,8 @@ class _MySwitchState extends State<MySwitch> with SingleTickerProviderStateMixin
     super.initState();
     _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
     _circleAnimation = AlignmentTween(
-        begin: widget.value ? Alignment.centerRight : Alignment.centerLeft,
-        end: widget.value ? Alignment.centerLeft : Alignment.centerRight)
+            begin: widget.value ? Alignment.centerRight : Alignment.centerLeft,
+            end: widget.value ? Alignment.centerLeft : Alignment.centerRight)
         .animate(
       CurvedAnimation(
         parent: _animationController,
