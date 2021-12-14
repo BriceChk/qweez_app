@@ -9,6 +9,7 @@ import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/error_page.dart';
 import 'package:qweez_app/pages/gameplay/questions/player_list_widget.dart';
 import 'package:qweez_app/pages/gameplay/questions/question_widget.dart';
+import 'package:qweez_app/pages/responsive.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -142,79 +143,87 @@ class _PresentGamePageState extends State<PresentGamePage> {
   }
 
   Widget _buildWaitingContent() {
-    var qrSize = MediaQuery.of(context).size.width / 2 - paddingHorizontal;
-    var maxSize = MediaQuery.of(context).size.height - 350;
-    return Row(
+    return Flex(
+      direction: Responsive.isDesktop(context) ? Axis.horizontal : Axis.vertical,
       children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: paddingVertical),
-                child: Text(
-                  'Qweez Code: ${_gameCode!}',
-                  style: const TextStyle(
-                    fontSize: fontSizeTitle,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: paddingVertical),
-                child: Container(
-                  width: qrSize,
-                  height: qrSize,
-                  constraints: BoxConstraints(maxWidth: maxSize, maxHeight: maxSize),
-                  child: QrImage(
-                    data: _url!,
-                    version: QrVersions.auto,
-                    size: qrSize,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: paddingVertical),
-                child: Text(_url!),
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: paddingVertical),
-                width: 200,
-                child: ElevatedButton(
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(colorYellow)),
-                  onPressed: _playerList.isEmpty
-                      ? null
-                      : () {
-                          _socket.emit('start-game');
-                        },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        AutoSizeText(
-                          "Let's start",
-                          style: TextStyle(
-                            color: colorBlack,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: paddingVertical / 2),
-                          child: Icon(
-                            Icons.arrow_forward_rounded,
-                            color: colorBlack,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+        if (Responsive.isDesktop(context))
+          Expanded(
+            child: _buildQr(),
           ),
-        ),
+        if (!Responsive.isDesktop(context)) _buildQr(),
         Expanded(
           child: SingleChildScrollView(
             child: PlayerList(playerList: _playerList),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQr() {
+    var qrSize = MediaQuery.of(context).size.width / 2 - paddingHorizontal;
+    var maxSize = MediaQuery.of(context).size.height - 350;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: paddingVertical),
+          child: Text(
+            'Qweez Code: ${_gameCode!}',
+            style: const TextStyle(
+              fontSize: fontSizeTitle,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: paddingVertical),
+          child: Container(
+            width: qrSize,
+            height: qrSize,
+            constraints: BoxConstraints(maxWidth: maxSize, maxHeight: maxSize),
+            child: QrImage(
+              data: _url!,
+              version: QrVersions.auto,
+              size: qrSize,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: paddingVertical),
+          child: Text(_url!),
+        ),
+        Container(
+          padding: const EdgeInsets.only(top: paddingVertical),
+          width: 200,
+          child: ElevatedButton(
+            style: ButtonStyle(backgroundColor: MaterialStateProperty.all(colorYellow)),
+            onPressed: _playerList.isEmpty
+                ? null
+                : () {
+                    _socket.emit('start-game');
+                  },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  AutoSizeText(
+                    "Let's start",
+                    style: TextStyle(
+                      color: colorBlack,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: paddingVertical / 2),
+                    child: Icon(
+                      Icons.arrow_forward_rounded,
+                      color: colorBlack,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ],
