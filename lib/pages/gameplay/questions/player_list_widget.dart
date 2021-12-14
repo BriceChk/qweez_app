@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:qweez_app/constants.dart';
+import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/pages/responsive.dart';
 
 class PlayerList extends StatelessWidget {
-  final List<String> playerList;
+  final List<Player> playerList;
   const PlayerList({Key? key, required this.playerList}) : super(key: key);
 
   @override
@@ -29,7 +30,7 @@ class PlayerList extends StatelessWidget {
             color: colorBlue.withOpacity(0.1),
           ),
           child: Text(
-            player,
+            player.username,
             overflow: TextOverflow.fade,
             softWrap: false,
             textAlign: TextAlign.center,

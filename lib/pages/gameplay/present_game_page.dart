@@ -2,10 +2,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
+import 'package:qweez_app/components/ranking_page.dart';
 import 'package:qweez_app/constants.dart';
+import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/error_page.dart';
 import 'package:qweez_app/pages/gameplay/questions/player_list_widget.dart';
+import 'package:qweez_app/pages/gameplay/questions/question_widget.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -26,13 +29,12 @@ class _PresentGamePageState extends State<PresentGamePage> {
   late Socket _socket;
 
   String? _gameCode, _url;
-  List<String> _playerList = [];
+  List<Player> _playerList = [];
 
   bool _hasError = false;
+  bool _gamePlaying = false;
 
-  //TODO Connect to socket.io, request room for qweezId, get back code, display QR, display playerlist + start btn
-  //TODO Show answer / skip question button
-  //TODO Leaderboard button on answer screen
+  int _currentQuestionIndex = 0;
 
   @override
   initState() {
@@ -65,12 +67,25 @@ class _PresentGamePageState extends State<PresentGamePage> {
 
     _socket.on('player-joined', (data) {
       setState(() {
-        _playerList = List<String>.from(data['usernames']);
+        _playerList = List.from(data['players']).map((e) => Player.fromJson(e)).toList();
       });
     });
     _socket.on('player-left', (data) {
       setState(() {
-        _playerList.remove(data['username']);
+        _playerList.removeWhere((element) => element.username == data['username']);
+      });
+    });
+
+    _socket.on('status-update', (data) {
+      setState(() {
+        _gamePlaying = data['status'] == 'playing';
+        _currentQuestionIndex = data['questionIndex'];
+      });
+    });
+
+    _socket.on('player-list', (data) {
+      setState(() {
+        _playerList = List.from(data['players']).map((e) => Player.fromJson(e)).toList();
       });
     });
   }
@@ -87,17 +102,46 @@ class _PresentGamePageState extends State<PresentGamePage> {
       return const ErrorPage(message: '404: Qweez not found.');
     }
 
-    return Scaffold(
-      appBar: ClassicAppbar(title: _qweez != null ? _qweez!.name : "Join the game"),
-      body: _buildBody(),
+    if (_gameCode == null) {
+      return Scaffold(
+        appBar: ClassicAppbar(title: _qweez != null ? _qweez!.name : "Join the game"),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (!_gamePlaying) {
+      return Scaffold(
+        appBar: ClassicAppbar(title: _qweez != null ? _qweez!.name : "Join the game"),
+        body: _buildWaitingContent(),
+      );
+    }
+
+    if (_currentQuestionIndex == _qweez!.questions.length) {
+      return Scaffold(
+        appBar: ClassicAppbar(title: _qweez != null ? _qweez!.name : "Join the game"),
+        body: RankingWidget(playerList: _playerList, numberOfQuestions: _qweez!.questions.length),
+      );
+    }
+
+    return QuestionWidget(
+      key: ValueKey(_currentQuestionIndex),
+      question: _qweez!.questions[_currentQuestionIndex],
+      index: _currentQuestionIndex,
+      qweez: _qweez!,
+      playerList: _playerList,
+      canSelect: false,
+      onNextQuestion: () {
+        setState(() {
+          _socket.emit('next-question');
+        });
+      },
+      onFinished: (goodAnswer) {
+        _socket.emit('show-result');
+      },
     );
   }
 
-  Widget _buildBody() {
-    if (_gameCode == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
+  Widget _buildWaitingContent() {
     var qrSize = MediaQuery.of(context).size.width / 2 - paddingHorizontal;
     var maxSize = MediaQuery.of(context).size.height - 350;
     return Row(
@@ -140,7 +184,7 @@ class _PresentGamePageState extends State<PresentGamePage> {
                   onPressed: _playerList.isEmpty
                       ? null
                       : () {
-                          //TODO Start game
+                          _socket.emit('start-game');
                         },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),

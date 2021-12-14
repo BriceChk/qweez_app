@@ -1,31 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:qweez_app/components/cards/my_ranking_card.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
 import 'package:qweez_app/constants.dart';
+import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/question.dart';
+import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/gameplay/questions/my_answer_card.dart';
 import 'package:qweez_app/pages/gameplay/questions/question_appbar.dart';
+import 'package:qweez_app/pages/responsive.dart';
 
 class QuestionWidget extends StatefulWidget {
   final Question question;
   final int index;
-  final String qweezTitle;
-  final Function(bool goodAnswer) onFinished;
-  final Function() onNextQuestion;
+  final Qweez qweez;
+  final List<Player>? playerList;
+  final Function(bool goodAnswer)? onFinished;
+  final Function()? onNextQuestion;
+  final bool showControlButtons;
+  final AnimationController? animationController;
+  final bool canSelect;
+  final String? username;
 
   const QuestionWidget({
     Key? key,
     required this.question,
     required this.index,
-    required this.onFinished,
-    required this.onNextQuestion,
-    required this.qweezTitle,
+    this.onFinished,
+    this.onNextQuestion,
+    this.showControlButtons = true,
+    this.animationController,
+    required this.qweez,
+    this.playerList,
+    this.canSelect = true,
+    this.username,
   }) : super(key: key);
 
   @override
   _QuestionWidgetState createState() => _QuestionWidgetState();
 }
 
-class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProviderStateMixin {
+class _QuestionWidgetState extends State<QuestionWidget> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
 
@@ -33,10 +48,15 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
   void initState() {
     super.initState();
 
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: widget.question.time),
-    );
+    if (widget.animationController != null) {
+      _animationController = widget.animationController!;
+      _animationController.duration = Duration(seconds: widget.question.time);
+    } else {
+      _animationController = AnimationController(
+        vsync: this,
+        duration: Duration(seconds: widget.question.time),
+      );
+    }
 
     _colorTween = _animationController.drive(
       ColorTween(
@@ -48,7 +68,9 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         var goodAnswer = widget.question.answers.any((answer) => answer.isSelected && answer.isGoodAnswer);
-        widget.onFinished(goodAnswer);
+        if (widget.onFinished != null) {
+          widget.onFinished!(goodAnswer);
+        }
         // setState to rebuild buttons depending on animation controller status
         setState(() {});
       }
@@ -72,7 +94,7 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
           appBar: QuestionAppBar(
             question: widget.question,
             index: widget.index,
-            qweezTitle: widget.qweezTitle,
+            qweezTitle: widget.qweez.name,
           ),
           body: _getBody(),
         ),
@@ -123,7 +145,7 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
                   animationController: _animationController,
                   onSelect: () {
                     // Deselect all answers & select the tapped one if the time is not out
-                    if (_animationController.isAnimating) {
+                    if (_animationController.isAnimating && widget.canSelect) {
                       setState(() {
                         for (var element in widget.question.answers) {
                           element.isSelected = element == answer;
@@ -134,7 +156,7 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
                 );
               }).toList(),
             ),
-          if (_animationController.isAnimating)
+          if (_animationController.isAnimating && widget.showControlButtons)
             Padding(
               padding: const EdgeInsets.only(top: paddingVertical),
               child: ElevatedButton(
@@ -148,7 +170,7 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
                     children: const [
                       Padding(
                         padding: EdgeInsets.only(right: paddingHorizontal / 3),
-                        child: Text('Show result'),
+                        child: Text('Show answer'),
                       ),
                       Icon(
                         Icons.arrow_forward_rounded,
@@ -158,24 +180,21 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
                 ),
               ),
             ),
-          if (_animationController.isCompleted)
+          if (_animationController.isCompleted && widget.showControlButtons)
             Padding(
-              padding: const EdgeInsets.only(top: paddingVertical),
+              padding: const EdgeInsets.symmetric(vertical: paddingVertical),
               child: ElevatedButton(
-                onPressed: () {
-                  widget.onNextQuestion();
-                  _animationController.forward(from: 0);
-                },
+                onPressed: widget.onNextQuestion,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       Padding(
-                        padding: EdgeInsets.only(right: paddingHorizontal / 3),
-                        child: Text('Next question'),
+                        padding: const EdgeInsets.only(right: paddingHorizontal / 3),
+                        child: Text(widget.index == widget.qweez.questions.length - 1 ? 'End quiz' : 'Next question'),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.arrow_forward_rounded,
                       ),
                     ],
@@ -183,7 +202,92 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
                 ),
               ),
             ),
+          if (_animationController.isCompleted && widget.playerList != null) _buildRankingButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRankingButton() {
+    widget.playerList!.sort((a, b) => a.score.compareTo(b.score));
+
+    return ElevatedButton(
+      onPressed: () {
+        showMaterialModalBottomSheet(
+          backgroundColor: colorWhite,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(borderRadius),
+              topRight: Radius.circular(borderRadius),
+            ),
+          ),
+          context: context,
+          builder: (context) => SizedBox(
+            height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: paddingVertical,
+                horizontal: paddingHorizontal,
+              ),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      splashRadius: 20.0,
+                      highlightColor: Colors.transparent,
+                      splashColor: colorBlue.withOpacity(0.25),
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GridView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: paddingVertical, horizontal: paddingHorizontal),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: Responsive.isMobile(context)
+                            ? 1
+                            : Responsive.isTablet(context)
+                                ? 2
+                                : 3,
+                        mainAxisExtent: 70, // Card height (100) + Padding vertical
+                        crossAxisSpacing: paddingHorizontal,
+                        mainAxisSpacing: paddingVertical / 2,
+                      ),
+                      children: widget.playerList!.map((member) {
+                        int index = widget.playerList!.indexOf(member);
+
+                        return MyRankingCard(
+                          member: member,
+                          numberOfQuestions: widget.qweez.questions.length,
+                          rank: index + 1,
+                          username: widget.username,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
+        child: Row(
+          children: const [
+            Icon(
+              Icons.align_vertical_bottom_rounded,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: paddingHorizontal / 3),
+              child: Text('Ranking'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -201,12 +305,16 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
             },
           );
         } else {
-          var color = answer.isSelected ? colorGreen : colorRed;
+          var color = answer.isSelected || widget.username == null ? colorGreen : colorRed;
 
           return Column(
             children: [
               Text(
-                answer.isSelected ? 'Correct 🎉 The answer is:' : 'Sorry 😔 The answer is:',
+                widget.username == null
+                    ? 'The answer is:'
+                    : answer.isSelected
+                        ? 'Correct 🎉 The answer is:'
+                        : 'Sorry 😔 The answer is:',
                 style: TextStyle(
                   fontSize: fontSizeText,
                   fontWeight: FontWeight.w600,

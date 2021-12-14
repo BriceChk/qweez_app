@@ -2,21 +2,21 @@ class Player {
   static const String dbUserName = 'username';
   static const String dbScore = 'score';
 
-  String userName = '';
+  String username = '';
   int score = 0;
 
   Player({
-    required this.userName,
+    required this.username,
     this.score = 0,
   });
 
   Player.fromJson(Map<String, dynamic> json) {
-    userName = json[dbUserName];
+    username = json[dbUserName];
     score = json[dbScore];
   }
 
   Map<String, dynamic> toJson() => {
-        dbUserName: userName,
+        dbUserName: username,
         dbScore: score,
       };
 }

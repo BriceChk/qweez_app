@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/player.dart';
-import 'package:qweez_app/models/qweez.dart';
 
 class MyRankingCard extends StatelessWidget {
   final Player member;
-  final Qweez qweez;
+  final int numberOfQuestions;
+  final String? username;
   final int rank;
 
   const MyRankingCard({
     Key? key,
     required this.member,
-    required this.qweez,
+    required this.numberOfQuestions,
     required this.rank,
+    this.username,
   }) : super(key: key);
 
   @override
@@ -22,7 +23,7 @@ class MyRankingCard extends StatelessWidget {
       padding: const EdgeInsets.only(right: paddingVertical),
       height: 50,
       decoration: BoxDecoration(
-        color: colorWhite,
+        color: username == member.username ? colorYellow : colorWhite,
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
@@ -55,7 +56,7 @@ class MyRankingCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(left: paddingVertical),
               child: Text(
-                member.userName,
+                member.username,
                 maxLines: 1,
                 overflow: TextOverflow.fade,
                 softWrap: false,
@@ -69,9 +70,9 @@ class MyRankingCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: paddingVertical),
             child: Text(
-              member.score.toString() + ' / ' + qweez.questions.length.toString(),
+              member.score.toString() + ' / ' + numberOfQuestions.toString(),
               style: const TextStyle(
-                color: colorYellow,
+                color: colorBlue,
                 fontSize: fontSizeText,
               ),
             ),

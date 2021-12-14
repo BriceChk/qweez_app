@@ -73,7 +73,7 @@ class _PlayAlonePageState extends State<PlayAlonePage> with SingleTickerProvider
       key: UniqueKey(),
       question: _qweez!.questions[_currentQuestionIndex],
       index: _currentQuestionIndex,
-      qweezTitle: _qweez!.name,
+      qweez: _qweez!,
       onFinished: (bool goodAnswer) {
         if (goodAnswer) {
           _goodAnswers++;
