@@ -130,43 +130,51 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
               }).toList(),
             ),
           if (_animationController.isAnimating)
-            ElevatedButton(
-              onPressed: () {
-                _animationController.animateTo(1, duration: const Duration());
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
-                child: Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.only(right: paddingHorizontal / 3),
-                      child: Text('Show result'),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                    ),
-                  ],
+            Padding(
+              padding: const EdgeInsets.only(top: paddingVertical),
+              child: ElevatedButton(
+                onPressed: () {
+                  _animationController.animateTo(1, duration: const Duration());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.only(right: paddingHorizontal / 3),
+                        child: Text('Show result'),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           if (_animationController.isCompleted)
-            ElevatedButton(
-              onPressed: () {
-                widget.onNextQuestion();
-                _animationController.forward(from: 0);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
-                child: Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.only(right: paddingHorizontal / 3),
-                      child: Text('Next question'),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                    ),
-                  ],
+            Padding(
+              padding: const EdgeInsets.only(top: paddingVertical),
+              child: ElevatedButton(
+                onPressed: () {
+                  widget.onNextQuestion();
+                  _animationController.forward(from: 0);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.only(right: paddingHorizontal / 3),
+                        child: Text('Next question'),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
