@@ -23,3 +23,4 @@ const paddingVertical = 15.0;
 const borderRadius = 24.0;
 
 const saveText = 'Save';
+const socketIoHost = 'http://192.168.178.75:3000';

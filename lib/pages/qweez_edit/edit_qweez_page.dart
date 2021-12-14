@@ -6,6 +6,7 @@ import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/question.dart';
 import 'package:qweez_app/models/qweez.dart';
+import 'package:qweez_app/pages/error_page.dart';
 import 'package:qweez_app/pages/qweez_edit/edit_question_page.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 
@@ -24,6 +25,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
 
   late Qweez _qweez;
   bool _isLoaded = false;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -33,7 +35,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
       _qweezRepo.get(widget.qweezId!).then((value) {
         setState(() {
           if (value == null) {
-            //TODO ID invalide
+            _hasError = true;
             return;
           }
 
@@ -49,6 +51,10 @@ class _EditQweezPageState extends State<EditQweezPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_hasError) {
+      return const ErrorPage(message: '404: Qweez not found.');
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

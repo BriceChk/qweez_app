@@ -49,11 +49,11 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                     itemBuilder: (BuildContext context) {
                       return <PopupMenuEntry<int>>[
                         const PopupMenuItem(
-                          value: 2,
+                          value: 1,
                           child: Text('Log out'),
                         ),
                         const PopupMenuItem(
-                          value: 1,
+                          value: 2,
                           child: Text('Delete account'),
                         ),
                         const PopupMenuItem(
@@ -130,7 +130,8 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                         textInputAction: TextInputAction.done,
                         onChanged: (value) async {
                           if (value.length == 4) {
-                            Beamer.of(context).beamToNamed('/play/$value');
+                            var code = value.toUpperCase();
+                            Beamer.of(context).beamToNamed('/play/$code');
                           }
                         },
                       ),

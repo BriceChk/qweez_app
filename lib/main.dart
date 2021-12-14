@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qweez_app/constants.dart';
+import 'package:qweez_app/pages/error_page.dart';
 import 'package:qweez_app/pages/gameplay/join_game_page.dart';
 import 'package:qweez_app/pages/gameplay/play_alone_page.dart';
 import 'package:qweez_app/pages/gameplay/present_game_page.dart';
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
   // Define the location of our routes
   final _routerDelegate = BeamerDelegate(
     initialPath: '/',
+    notFoundPage: const BeamPage(key: ValueKey('error'), child: ErrorPage(message: '404: Not found.')),
     guards: [
       BeamGuard(
         // on which path patterns (from incoming routes) to perform the check
@@ -85,6 +87,7 @@ class _MyAppState extends State<MyApp> {
             type: BeamPageType.cupertino,
             child: EditQweezPage(qweezId: qweezId),
             title: 'Qweez - Edit',
+            popToNamed: '/',
           );
         },
         '/qweez/:qweezId/present': (context, state, data) {
@@ -94,6 +97,7 @@ class _MyAppState extends State<MyApp> {
             child: PresentGamePage(qweezId: qweezId),
             type: BeamPageType.cupertino,
             title: 'Qweez - Presenting',
+            popToNamed: '/',
           );
         },
         '/qweez/:qweezId/play': (context, state, data) {
@@ -103,6 +107,7 @@ class _MyAppState extends State<MyApp> {
             child: PlayAlonePage(qweezId: qweezId),
             type: BeamPageType.cupertino,
             title: 'Qweez - Play',
+            popToNamed: '/',
           );
         },
         '/play/:code': (context, state, data) {
@@ -112,6 +117,7 @@ class _MyAppState extends State<MyApp> {
             child: JoinGamePage(gameCode: code),
             type: BeamPageType.cupertino,
             title: 'Qweez - Play',
+            popToNamed: '/',
           );
         },
         '/login': (context, state, data) => const BeamPage(

@@ -3,6 +3,7 @@ import 'package:qweez_app/components/appbar/classic_appbar.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/qweez.dart';
+import 'package:qweez_app/pages/error_page.dart';
 import 'package:qweez_app/pages/gameplay/questions/player_list_widget.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -24,10 +25,12 @@ class _JoinGamePageState extends State<JoinGamePage> {
 
   String _usernameInput = '';
   String _username = '';
-  String _errorText = '';
   late Socket _socket;
 
   bool _gamePlaying = false;
+
+  String _errorText = '';
+  String _errorPageMessage = '';
 
   List<String> _playerList = [];
 
@@ -37,12 +40,14 @@ class _JoinGamePageState extends State<JoinGamePage> {
   @override
   void initState() {
     super.initState();
-    _socket = io('http://localhost:3000', OptionBuilder().setTransports(['websocket']).build());
+    _socket = io(socketIoHost, OptionBuilder().setTransports(['websocket']).disableAutoConnect().build());
 
     _socket.on('qweez-id', (data) {
       _qweezRepo.get(data['qweezId']).then((value) {
         if (value == null) {
-          //TODO Alert + go home
+          setState(() {
+            _errorPageMessage = 'Qweez not found';
+          });
           return;
         }
         setState(() {
@@ -65,34 +70,40 @@ class _JoinGamePageState extends State<JoinGamePage> {
     //TODO Game events
 
     _socket.on('username-already-taken', (data) {
-      print('username taken');
       setState(() {
         _username = '';
         _errorText = 'This username is already taken';
       });
     });
-    _socket.on('unknown-room', (data) {
-      print('unknown room');
-      //TODO Alert + go home
+    _socket.on('unknown-room', (data) async {
+      setState(() {
+        _errorPageMessage = 'This code is invalid.';
+      });
     });
-    _socket.on('game-already-started', (data) {
-      print('already started');
-      //TODO Alert + go home
+    _socket.on('game-already-started', (data) async {
+      setState(() {
+        _errorPageMessage = 'The Qweez has already started.';
+      });
     });
-    _socket.on('game-host-quit', (data) {
-      print('host quit');
-      //TODO Alert + go home
+    _socket.on('game-host-quit', (data) async {
+      setState(() {
+        _errorPageMessage = 'The host has closed the Qweez.';
+      });
     });
   }
 
   @override
   void dispose() {
-    _socket.close();
+    _socket.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_errorPageMessage.isNotEmpty) {
+      return ErrorPage(message: _errorPageMessage);
+    }
+
     return Scaffold(
       appBar: ClassicAppbar(title: _qweez != null ? _qweez!.name : "Join the game"),
       body: _buildBody(),
@@ -144,6 +155,9 @@ class _JoinGamePageState extends State<JoinGamePage> {
                                 setState(() {
                                   _username = _usernameInput;
                                 });
+                                if (!_socket.connected) {
+                                  _socket.connect();
+                                }
                                 _socket.emit('join-room', {'gameCode': widget.gameCode, 'username': _username});
                               }
                             },

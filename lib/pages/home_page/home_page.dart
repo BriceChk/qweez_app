@@ -323,7 +323,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               width: 250,
               child: QRView(
                 key: _qrKey,
-                onQRViewCreated: _onQRViewCreated,
+                onQRViewCreated: (controller) {
+                  setState(() {
+                    _qrController = controller;
+                  });
+                  controller.scannedDataStream.listen((scanData) {
+                    setState(() {
+                      _result = scanData;
+                      if (_result != null) {
+                        if (_result!.code!.contains('qweez-app.web.app/play/')) {
+                          Navigator.pop(context);
+                          controller.pauseCamera();
+                          var id = _result!.code!.split("qweez-app.web.app/play/")[1];
+                          context.beamToNamed('/play/$id');
+                        }
+                      }
+                      controller.resumeCamera();
+                    });
+                  });
+                },
                 overlay: QrScannerOverlayShape(
                   borderColor: colorYellow,
                   borderRadius: borderRadius / 2,
@@ -338,28 +356,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    setState(() {
-      _qrController = controller;
-    });
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        _result = scanData;
-        if (_result != null) {
-          if (_result!.code!.contains('qweez-app.web.app/play/')) {
-            controller.pauseCamera();
-            var id = _result!.code!.split("qweez-app.web.app/play/")[1];
-            context.beamToNamed('/play/$id');
-          }
-        }
-        controller.resumeCamera();
-      });
-    });
-  }
-
   @override
   void dispose() {
-    _qrController!.dispose();
+    if (_qrController != null) {
+      _qrController!.dispose();
+    }
     _animationController.dispose();
     super.dispose();
   }

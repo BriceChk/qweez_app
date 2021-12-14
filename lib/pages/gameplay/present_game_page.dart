@@ -4,6 +4,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/qweez.dart';
+import 'package:qweez_app/pages/error_page.dart';
 import 'package:qweez_app/pages/gameplay/questions/player_list_widget.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -27,6 +28,8 @@ class _PresentGamePageState extends State<PresentGamePage> {
   String? _gameCode, _url;
   List<String> _playerList = [];
 
+  bool _hasError = false;
+
   //TODO Connect to socket.io, request room for qweezId, get back code, display QR, display playerlist + start btn
   //TODO Show answer / skip question button
   //TODO Leaderboard button on answer screen
@@ -38,7 +41,7 @@ class _PresentGamePageState extends State<PresentGamePage> {
     _qweezRepo.get(widget.qweezId).then((value) {
       setState(() {
         if (value == null) {
-          //TODO ID invalide
+          _hasError = true;
           return;
         }
 
@@ -49,7 +52,8 @@ class _PresentGamePageState extends State<PresentGamePage> {
   }
 
   void _initSocket() {
-    _socket = io('http://localhost:3000', OptionBuilder().setTransports(['websocket']).build());
+    _socket = io(socketIoHost, OptionBuilder().setTransports(['websocket']).disableAutoConnect().build());
+    _socket.connect();
     _socket.emit('request-room', {'qweezId': _qweez!.id});
 
     _socket.on('room-created', (data) {
@@ -73,14 +77,14 @@ class _PresentGamePageState extends State<PresentGamePage> {
 
   @override
   void dispose() {
-    _socket.close();
+    _socket.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_gameCode == null) {
-      return const Center(child: CircularProgressIndicator());
+    if (_hasError) {
+      return const ErrorPage(message: '404: Qweez not found.');
     }
 
     return Scaffold(
@@ -90,6 +94,10 @@ class _PresentGamePageState extends State<PresentGamePage> {
   }
 
   Widget _buildBody() {
+    if (_gameCode == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     var qrSize = MediaQuery.of(context).size.width / 2 - paddingHorizontal;
     var maxSize = MediaQuery.of(context).size.height - 350;
     return Row(

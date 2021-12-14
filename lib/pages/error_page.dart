@@ -1,13 +1,13 @@
-import 'package:beamer/src/beamer.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/constants.dart';
 
 class ErrorPage extends StatelessWidget {
-  final String error;
+  final String message;
 
   const ErrorPage({
     Key? key,
-    required this.error,
+    required this.message,
   }) : super(key: key);
 
   @override
@@ -37,7 +37,7 @@ class ErrorPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: paddingVertical * 3, bottom: paddingVertical * 2),
                     child: Text(
-                      error,
+                      message,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: fontSizeSubtitle,
