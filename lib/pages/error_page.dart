@@ -1,8 +1,14 @@
+import 'package:beamer/src/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/constants.dart';
 
 class ErrorPage extends StatelessWidget {
-  const ErrorPage({Key? key}) : super(key: key);
+  final String error;
+
+  const ErrorPage({
+    Key? key,
+    required this.error,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +24,8 @@ class ErrorPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Qweez',
                     style: TextStyle(
                       fontSize: fontSizeAppName,
@@ -29,14 +35,34 @@ class ErrorPage extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: paddingVertical * 3),
+                    padding: const EdgeInsets.only(top: paddingVertical * 3, bottom: paddingVertical * 2),
                     child: Text(
-                      'An error occured, please restart the app',
+                      error,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: fontSizeSubtitle,
                         color: colorWhite,
                         fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.beamToNamed('/');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.only(right: paddingHorizontal / 3),
+                            child: Text('Home page'),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                          ),
+                        ],
                       ),
                     ),
                   ),
