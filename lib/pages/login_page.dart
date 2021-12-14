@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                                     return passwordConfirmation!.isEmpty
                                         ? 'Please enter re-enter your password'
                                         : _passwordConfirmation != _password
-                                            ? 'The passwords do not correspond'
+                                            ? 'The passwords do not match'
                                             : null;
                                   },
                                   onChanged: (String password) {
@@ -259,6 +259,9 @@ class _LoginPageState extends State<LoginPage> {
 
   //firebase function to create user with email and password
   Future signUp() async {
+    setState(() {
+      _errorText = '';
+    });
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
@@ -271,7 +274,11 @@ class _LoginPageState extends State<LoginPage> {
         'I will check',
       );
 
-      //FirebaseAuth.instance.signOut().then((value) => controller.animateTo(0, duration: Duration(milliseconds: 250),));
+      FirebaseAuth.instance.signOut();
+      MyApp.user = null;
+      setState(() {
+        _isRegister = false;
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         setState(() {
@@ -296,14 +303,15 @@ class _LoginPageState extends State<LoginPage> {
           await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
 
       if (userCredential.user!.emailVerified) {
-        MyApp.user = userCredential.user;
-        Beamer.of(context).beamBack();
+        Beamer.of(context).popToNamed('/');
       } else {
         _showEmailSend(
           'Your account is not verified.',
           'A verification e-mail was sent to you, if you have not received it, please check your spam.',
           'Understood',
         );
+        FirebaseAuth.instance.signOut();
+        MyApp.user = null;
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {

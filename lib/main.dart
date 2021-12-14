@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,9 +18,18 @@ import 'package:url_strategy/url_strategy.dart';
 
 import 'firebase_options.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
+  HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Set the orientation to portrait only
   await SystemChrome.setPreferredOrientations([
@@ -61,13 +72,13 @@ class _MyAppState extends State<MyApp> {
         // perform the check on all patterns that **don't** have a match in pathPatterns
         guardNonMatching: true,
         // return false to redirect
-        check: (context, location) => MyApp.user != null,
+        check: (context, location) => MyApp.user != null && MyApp.user!.emailVerified,
         // where to redirect on a false check
         beamToNamed: (origin, target) => '/login',
       ),
       BeamGuard(
         pathPatterns: ['/login'],
-        check: (context, location) => MyApp.user == null,
+        check: (context, location) => MyApp.user == null || !MyApp.user!.emailVerified,
         beamToNamed: (origin, target) => '/',
       ),
     ],
