@@ -16,7 +16,7 @@ class QuestionAppBar extends StatelessWidget implements PreferredSize {
   }) : super(key: key);
 
   @override
-  Size get preferredSize => const Size(double.infinity, 192);
+  Size get preferredSize => const Size(double.infinity, 230);
 
   @override
   Widget get child => Container(

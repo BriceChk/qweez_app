@@ -65,13 +65,18 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: QuestionAppBar(
-        question: widget.question,
-        index: widget.index,
-        qweezTitle: widget.qweezTitle,
+    return Container(
+      color: colorBlue,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: QuestionAppBar(
+            question: widget.question,
+            index: widget.index,
+            qweezTitle: widget.qweezTitle,
+          ),
+          body: _getBody(),
+        ),
       ),
-      body: _getBody(),
     );
   }
 
