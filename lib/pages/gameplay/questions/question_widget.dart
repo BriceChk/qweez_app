@@ -17,7 +17,8 @@ class QuestionWidget extends StatefulWidget {
     required this.question,
     required this.index,
     required this.onFinished,
-    required this.onNextQuestion, required this.qweezTitle,
+    required this.onNextQuestion,
+    required this.qweezTitle,
   }) : super(key: key);
 
   @override
