@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 
 class LaunchPage extends StatefulWidget {
   const LaunchPage({Key? key}) : super(key: key);

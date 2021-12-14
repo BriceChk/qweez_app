@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 
 class MyDropDownFormField extends StatelessWidget {
   final String hintText;

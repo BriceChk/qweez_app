@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:qweez_app/components/qweez_bottom_sheet.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/pages/home_page/qweez_bottom_sheet.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/qweez.dart';
 
 class QweezCard extends StatelessWidget {

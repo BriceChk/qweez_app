@@ -3,7 +3,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/launch_page.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
 import 'package:qweez_app/components/cards/my_ranking_card.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/responsive.dart';

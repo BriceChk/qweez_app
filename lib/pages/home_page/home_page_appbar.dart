@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSize {

@@ -5,8 +5,12 @@ class QweezRepository {
   CollectionReference<Map<String, dynamic>> get _collection =>
       FirebaseFirestore.instance.collection(Qweez.dbCollectionName);
 
-  Future<Qweez> get(String qweezId) async {
+  Future<Qweez?> get(String qweezId) async {
     var doc = await _collection.doc(qweezId).get();
+
+    if (!doc.exists) {
+      return null;
+    }
 
     Map<String, dynamic> data = doc.data()!;
     data[Qweez.dbId] = doc.id;

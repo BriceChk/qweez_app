@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/form/my_dropdown_form_field.dart';
 import 'package:qweez_app/components/form/my_text_form_field_complete.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/question.dart';
 
 class EditQuestionPage extends StatefulWidget {
@@ -23,6 +23,8 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
   final List<String> _listExampleQuestion = ['What is the capital of ...', 'When does the ...', 'Wo was the first ...'];
   final List<String> _listAnswersDropDown4 = ['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4'];
   final List<String> _listAnswersDropDown2 = ['Answer 1', 'Answer 2'];
+  final listDropDownValue = ['Open answer (written)', '2 Answers', '4 Answers'];
+
   List<String> _listDropDown = [];
 
   String _correctAnswerSelected = '';
@@ -189,7 +191,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
               width: double.maxFinite,
               alignment: Alignment.center,
               child: const Text(
-                validateText,
+                saveText,
               ),
             ),
             onPressed: () {

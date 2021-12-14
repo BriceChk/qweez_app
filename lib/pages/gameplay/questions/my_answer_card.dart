@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:qweez_app/models/question.dart';
 
 class MyAnswerCard extends StatelessWidget {
-  final String text;
-  final bool isTrue;
+  final Answer answer;
+  final int index;
   final AnimationController animationController;
+  final Function() onSelect;
 
   const MyAnswerCard({
     Key? key,
-    required this.text,
-    required this.isTrue,
+    required this.answer,
+    required this.index,
     required this.animationController,
+    required this.onSelect,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool isSelected = false;
-
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget? child) {
         return GestureDetector(
           //TODO Handle case mutliple choice or unique choice
-          onTap: () {
-            isSelected = !isSelected;
-          },
+          onTap: onSelect,
           child: Container(
             constraints: const BoxConstraints(
               maxHeight: 100,
@@ -41,12 +40,12 @@ class MyAnswerCard extends StatelessWidget {
             decoration: BoxDecoration(
               //color: Colors.amber,
               color: animationController.isCompleted
-                  ? !isTrue && isSelected
+                  ? !answer.isGoodAnswer && answer.isSelected
                       ? colorRed.withOpacity(0.45)
-                      : isTrue
+                      : answer.isGoodAnswer
                           ? colorGreen.withOpacity(0.60)
                           : colorWhite
-                  : isSelected
+                  : answer.isSelected
                       ? colorYellow.withOpacity(0.35)
                       : colorWhite,
               borderRadius: BorderRadius.circular(borderRadius),
@@ -75,11 +74,11 @@ class MyAnswerCard extends StatelessWidget {
                   child: Container(
                     margin: const EdgeInsets.only(left: paddingHorizontal / 2),
                     child: AutoSizeText(
-                      text,
+                      answer.answer,
                       maxLines: 4,
                       style: TextStyle(
                         color: animationController.isCompleted
-                            ? isTrue
+                            ? answer.isGoodAnswer
                                 ? colorWhite
                                 : colorRed.withOpacity(0.8)
                             : colorDarkGray,
@@ -98,14 +97,14 @@ class MyAnswerCard extends StatelessWidget {
   Widget _buildLeading() {
     if (animationController.isCompleted) {
       return Icon(
-        isTrue ? Icons.check_rounded : Icons.clear_rounded,
-        color: isTrue ? colorGreen : colorRed,
+        answer.isGoodAnswer ? Icons.check_rounded : Icons.clear_rounded,
+        color: answer.isGoodAnswer ? colorGreen : colorRed,
         size: 30,
       );
     } else {
-      return const Text(
-        'A',
-        style: TextStyle(
+      return Text(
+        index.toString(),
+        style: const TextStyle(
           fontSize: fontSizeTitle / 1.5,
           color: colorBlue,
         ),

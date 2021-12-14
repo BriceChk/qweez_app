@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/player.dart';
 import 'package:qweez_app/models/qweez.dart';
 

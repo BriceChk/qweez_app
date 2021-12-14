@@ -42,6 +42,9 @@ class Answer {
   String answer = '';
   bool isGoodAnswer = false;
 
+  // Used in QuestionWidget / MyAnswerCard
+  bool isSelected = false;
+
   Answer({
     this.answer = '',
     this.isGoodAnswer = false,

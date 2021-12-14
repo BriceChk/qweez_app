@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/form/my_text_form_field_complete.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/question.dart';
 import 'package:qweez_app/models/qweez.dart';
@@ -31,6 +31,11 @@ class _EditQweezPageState extends State<EditQweezPage> {
     if (widget.qweezId != null) {
       _qweezRepo.get(widget.qweezId!).then((value) {
         setState(() {
+          if (value == null) {
+            //TODO ID invalide
+            return;
+          }
+
           _qweez = value;
         });
       });
@@ -123,7 +128,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
                     height: 40,
                     child: ElevatedButton(
                       child: const Text(
-                        validateText,
+                        saveText,
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {

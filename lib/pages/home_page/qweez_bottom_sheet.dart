@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/choose_playername_modal.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 

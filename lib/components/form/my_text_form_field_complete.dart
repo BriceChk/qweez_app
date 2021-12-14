@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
-import 'package:qweez_app/constants/constants.dart';
+import 'package:qweez_app/constants.dart';
 
 class MyTextFormFieldComplete extends StatelessWidget {
   final String titleText;
