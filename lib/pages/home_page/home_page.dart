@@ -310,7 +310,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Future<void> _showQrCodeDialog(BuildContext context) {
     return showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius / 1.5),
@@ -332,8 +332,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       _result = scanData;
                       if (_result != null) {
                         if (_result!.code!.contains('qweez-app.web.app/play/')) {
-                          Navigator.pop(context);
-                          controller.pauseCamera();
+                          Navigator.pop(dialogContext);
+                          controller.dispose();
                           var id = _result!.code!.split("qweez-app.web.app/play/")[1];
                           context.beamToNamed('/play/$id');
                         }
