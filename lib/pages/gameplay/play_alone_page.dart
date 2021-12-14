@@ -161,6 +161,7 @@ class _PlayAlonePageState extends State<PlayAlonePage> with SingleTickerProvider
     }
 
     return QuestionWidget(
+      key: UniqueKey(),
       question: _qweez!.questions[_currentQuestionIndex],
       index: _currentQuestionIndex,
       qweezTitle: _qweez!.name,
