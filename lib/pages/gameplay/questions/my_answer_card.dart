@@ -23,7 +23,6 @@ class MyAnswerCard extends StatelessWidget {
       animation: animationController,
       builder: (BuildContext context, Widget? child) {
         return GestureDetector(
-          //TODO Handle case mutliple choice or unique choice
           onTap: onSelect,
           child: Container(
             constraints: const BoxConstraints(
