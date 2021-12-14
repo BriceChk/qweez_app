@@ -4,12 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qweez_app/constants/constants.dart';
-import 'package:qweez_app/pages/qweez_edit/edit_qweez_page.dart';
+import 'package:qweez_app/pages/gameplay/questions_presenter_waiting_page.dart';
 import 'package:qweez_app/pages/home_page/home_page.dart';
-import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/login_page.dart';
 import 'package:qweez_app/pages/questions/questions_page.dart';
-import 'package:qweez_app/pages/questions/questions_presenter_waiting_page.dart';
+import 'package:qweez_app/pages/qweez_edit/edit_qweez_page.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'firebase_options.dart';
 
@@ -49,20 +49,26 @@ class _MyAppState extends State<MyApp> {
   // Define the location of our routes
   final _routerDelegate = BeamerDelegate(
     initialPath: '/',
+    guards: [
+      BeamGuard(
+        // on which path patterns (from incoming routes) to perform the check
+        pathPatterns: ['/login', '/', '/play/*'],
+        // perform the check on all patterns that **don't** have a match in pathPatterns
+        guardNonMatching: true,
+        // return false to redirect
+        check: (context, location) => MyApp.user != null,
+        // where to redirect on a false check
+        beamToNamed: (origin, target) => '/login',
+      )
+    ],
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state, data) => const BeamPage(
-              key: ValueKey('home'),
-              child: HomePage(),
-            ),
-        '/launch': (context, state, data) => const BeamPage(
-              key: ValueKey('launch'),
-              child: LaunchPage(),
-            ),
+        '/': (context, state, data) => const BeamPage(key: ValueKey('home'), child: HomePage(), title: 'Qweez - Home'),
         '/create-qweez': (context, state, data) => const BeamPage(
               key: ValueKey('create-qweez'),
               child: EditQweezPage(),
               type: BeamPageType.cupertino,
+              title: 'Qweez - Create',
             ),
         '/qweez/:qweezId/edit': (context, state, data) {
           final qweezId = state.pathParameters['qweezId']!;
@@ -70,6 +76,7 @@ class _MyAppState extends State<MyApp> {
             key: ValueKey('qweez-edit-$qweezId'),
             type: BeamPageType.cupertino,
             child: EditQweezPage(qweezId: qweezId),
+            title: 'Qweez - Edit',
           );
         },
         '/qweez/:qweezId/present': (context, state, data) {
@@ -80,6 +87,7 @@ class _MyAppState extends State<MyApp> {
               qweezId: qweezId,
             ),
             type: BeamPageType.cupertino,
+            title: 'Qweez - Presenting',
           );
         },
         '/qweez/:qweezId/play': (context, state, data) {
@@ -88,6 +96,7 @@ class _MyAppState extends State<MyApp> {
             key: ValueKey('qweez-play-$qweezId'),
             child: const Questionpage(),
             type: BeamPageType.cupertino,
+            title: 'Qweez - Play',
           );
         },
         '/play/:code': (context, state, data) {
@@ -96,12 +105,14 @@ class _MyAppState extends State<MyApp> {
             key: ValueKey('qweez-join-$code'),
             child: const Questionpage(),
             type: BeamPageType.cupertino,
+            title: 'Qweez - Play',
           );
         },
         '/login': (context, state, data) => const BeamPage(
               key: ValueKey('login'),
               child: LoginPage(),
               type: BeamPageType.cupertino,
+              title: 'Qweez - Login',
             ),
       },
     ),
