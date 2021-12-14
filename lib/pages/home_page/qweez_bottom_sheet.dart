@@ -44,7 +44,7 @@ class QweezBottomSheet extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  showPickUsername(context, qweez.id!);
+                  context.beamToNamed('/qweez/${qweez.id}/play');
                 },
               ),
             if (qweez.questions.isNotEmpty)

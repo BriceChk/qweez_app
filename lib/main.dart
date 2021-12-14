@@ -8,6 +8,7 @@ import 'package:qweez_app/pages/gameplay/join_game_page.dart';
 import 'package:qweez_app/pages/gameplay/play_alone_page.dart';
 import 'package:qweez_app/pages/gameplay/questions_presenter_waiting_page.dart';
 import 'package:qweez_app/pages/home_page/home_page.dart';
+import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/login_page.dart';
 import 'package:qweez_app/pages/qweez_edit/edit_qweez_page.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -17,9 +18,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Set the orientation to portrait only
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -38,11 +37,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool _userIsLoaded = false;
+
   @override
   void initState() {
     super.initState();
 
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      _userIsLoaded = true;
       setState(() => MyApp.user = user);
     });
   }
@@ -60,7 +62,12 @@ class _MyAppState extends State<MyApp> {
         check: (context, location) => MyApp.user != null,
         // where to redirect on a false check
         beamToNamed: (origin, target) => '/login',
-      )
+      ),
+      BeamGuard(
+        pathPatterns: ['/login'],
+        check: (context, location) => MyApp.user == null,
+        beamToNamed: (origin, target) => '/',
+      ),
     ],
     locationBuilder: RoutesLocationBuilder(
       routes: {
@@ -128,6 +135,12 @@ class _MyAppState extends State<MyApp> {
         routeInformationParser: BeamerParser(),
         backButtonDispatcher: BeamerBackButtonDispatcher(delegate: _routerDelegate),
         scrollBehavior: const ScrollBehavior().copyWith(physics: const BouncingScrollPhysics()),
+        builder: (context, child) {
+          if (!_userIsLoaded) {
+            return const LaunchPage();
+          }
+          return child!;
+        },
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
               backgroundColor: colorBlue,

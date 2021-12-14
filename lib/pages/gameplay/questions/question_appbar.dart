@@ -5,16 +5,20 @@ import 'package:qweez_app/models/question.dart';
 
 class QuestionAppBar extends StatelessWidget implements PreferredSize {
   final Question question;
+  final String qweezTitle;
   final int index;
 
   const QuestionAppBar({
     Key? key,
     required this.question,
     required this.index,
+    required this.qweezTitle,
   }) : super(key: key);
 
   @override
   Size get preferredSize => const Size(double.infinity, 150);
+
+  //TODO Add quiz title in app bar (widget.qweezTitle)
 
   @override
   Widget get child => Container(
@@ -60,7 +64,7 @@ class QuestionAppBar extends StatelessWidget implements PreferredSize {
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
                 child: Text(
-                  'Question ' + index.toString(),
+                  'Question ' + (index + 1).toString(),
                 ),
               ),
             ),

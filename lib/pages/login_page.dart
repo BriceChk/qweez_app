@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                           alignment: Alignment.centerLeft,
                           highlightColor: Colors.transparent,
                           onPressed: () {
-                            Beamer.of(context).beamBack();
+                            Navigator.pop(context);
                           },
                         ),
                         const Padding(

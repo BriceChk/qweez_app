@@ -8,8 +8,17 @@ import 'package:qweez_app/pages/gameplay/questions/question_appbar.dart';
 class QuestionWidget extends StatefulWidget {
   final Question question;
   final int index;
+  final String qweezTitle;
+  final Function(bool goodAnswer) onFinished;
+  final Function() onNextQuestion;
 
-  const QuestionWidget({Key? key, required this.question, required this.index}) : super(key: key);
+  const QuestionWidget({
+    Key? key,
+    required this.question,
+    required this.index,
+    required this.onFinished,
+    required this.onNextQuestion, required this.qweezTitle,
+  }) : super(key: key);
 
   @override
   _QuestionWidgetState createState() => _QuestionWidgetState();
@@ -18,8 +27,6 @@ class QuestionWidget extends StatefulWidget {
 class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Color?> _colorTween;
-
-  String _openAnswerValue = '';
 
   @override
   void initState() {
@@ -37,6 +44,15 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
       ),
     );
 
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        var goodAnswer = widget.question.answers.any((answer) => answer.isSelected && answer.isGoodAnswer);
+        widget.onFinished(goodAnswer);
+        // setState to rebuild buttons depending on animation controller status
+        setState(() {});
+      }
+    });
+
     _animationController.forward();
   }
 
@@ -52,6 +68,7 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
       appBar: QuestionAppBar(
         question: widget.question,
         index: widget.index,
+        qweezTitle: widget.qweezTitle,
       ),
       body: _getBody(),
     );
@@ -70,7 +87,6 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
                 minHeight: 5,
                 valueColor: _colorTween,
                 value: _animationController.value,
-                //value: ,
               );
             },
           ),
@@ -112,6 +128,47 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
                 );
               }).toList(),
             ),
+          if (_animationController.isAnimating)
+            ElevatedButton(
+              onPressed: () {
+                _animationController.animateTo(1, duration: const Duration());
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
+                child: Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.only(right: paddingHorizontal / 3),
+                      child: Text('Show result'),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (_animationController.isCompleted)
+            ElevatedButton(
+              onPressed: () {
+                widget.onNextQuestion();
+                _animationController.forward(from: 0);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
+                child: Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.only(right: paddingHorizontal / 3),
+                      child: Text('Next question'),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -123,22 +180,19 @@ class _QuestionWidgetState extends State<QuestionWidget> with SingleTickerProvid
       builder: (context, Widget? child) {
         if (_animationController.isAnimating) {
           return MyTextFormField(
-            valueText: _openAnswerValue,
-            hintText: 'Hurry to write your answer',
+            hintText: 'Hurry to write your answer!',
             textInputAction: TextInputAction.done,
             onChanged: (value) {
-              _openAnswerValue = value;
+              answer.isSelected = value.toLowerCase() == answer.answer.toLowerCase();
             },
           );
         } else {
-          var color = _openAnswerValue.toLowerCase() == answer.answer.toLowerCase() ? colorGreen : colorRed;
+          var color = answer.isSelected ? colorGreen : colorRed;
 
           return Column(
             children: [
               Text(
-                _openAnswerValue.toLowerCase() == answer.answer.toLowerCase()
-                    ? 'Correct 🎉 The answer is:'
-                    : 'Sorry 😔 The answer is:',
+                answer.isSelected ? 'Correct 🎉 The answer is:' : 'Sorry 😔 The answer is:',
                 style: TextStyle(
                   fontSize: fontSizeText,
                   fontWeight: FontWeight.w600,

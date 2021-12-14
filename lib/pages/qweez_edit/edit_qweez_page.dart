@@ -23,6 +23,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
   final _qweezRepo = QweezRepository();
 
   late Qweez _qweez;
+  bool _isLoaded = false;
 
   @override
   void initState() {
@@ -36,11 +37,13 @@ class _EditQweezPageState extends State<EditQweezPage> {
             return;
           }
 
+          _isLoaded = true;
           _qweez = value;
         });
       });
     } else {
       _qweez = Qweez.empty(userId: MyApp.user!.uid);
+      _isLoaded = true;
     }
   }
 
@@ -53,99 +56,110 @@ class _EditQweezPageState extends State<EditQweezPage> {
             Icons.arrow_back_ios_rounded,
           ),
           onPressed: () {
-            Beamer.of(context).beamBack();
+            Navigator.pop(context);
           },
         ),
         centerTitle: true,
         title: const Text(
           'Create a Qweez',
+          style: TextStyle(color: colorWhite),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: paddingVertical,
-              horizontal: paddingHorizontal,
-            ),
-            //color: Colors.red,
-            child: Column(
-              children: [
-                MyTextFormFieldComplete(
-                  titleText: 'Name of the Qweez',
-                  valueText: _qweez.name,
-                  hintText: 'Name',
-                  required: true,
-                  validator: (String? name) {
-                    return name!.isEmpty ? 'Please enter a name' : null;
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    if (!_isLoaded) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: paddingVertical,
+            horizontal: paddingHorizontal,
+          ),
+          //color: Colors.red,
+          child: Column(
+            children: [
+              MyTextFormFieldComplete(
+                titleText: 'Name of the Qweez',
+                valueText: _qweez.name,
+                hintText: 'Name',
+                required: true,
+                validator: (String? name) {
+                  return name!.isEmpty ? 'Please enter a name' : null;
+                },
+                onChanged: (String name) => _qweez.name = name,
+              ),
+              MyTextFormFieldComplete(
+                titleText: 'Description',
+                valueText: _qweez.description,
+                hintText: 'This is a Qweez to learn...',
+                required: true,
+                validator: (String? description) {
+                  return description!.isEmpty ? 'Please enter a description' : null;
+                },
+                onChanged: (String description) => _qweez.description = description,
+              ),
+              Column(
+                children: _qweez.questions.map((question) {
+                  var index = _qweez.questions.indexOf(question);
+                  return _buildQuestion(question, index);
+                }).toList(),
+              ),
+              SizedBox(
+                width: double.maxFinite,
+                height: 40,
+                child: ElevatedButton(
+                  child: const Text(
+                    'Add a question',
+                  ),
+                  onPressed: () {
+                    // Create question and edit it immediatly
+                    setState(() {
+                      _qweez.questions.add(Question.empty());
+                    });
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => EditQuestionPage(
+                          question: _qweez.questions.last,
+                        ),
+                      ),
+                    );
                   },
-                  onChanged: (String name) => _qweez.name = name,
                 ),
-                MyTextFormFieldComplete(
-                  titleText: 'Description',
-                  valueText: _qweez.description,
-                  hintText: 'This is a Qweez to learn...',
-                  required: true,
-                  validator: (String? description) {
-                    return description!.isEmpty ? 'Please enter a description' : null;
-                  },
-                  onChanged: (String description) => _qweez.description = description,
-                ),
-                Column(
-                  children: _qweez.questions.map((question) {
-                    var index = _qweez.questions.indexOf(question);
-                    return _buildQuestion(question, index);
-                  }).toList(),
-                ),
-                SizedBox(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: paddingVertical),
+                child: SizedBox(
                   width: double.maxFinite,
                   height: 40,
                   child: ElevatedButton(
                     child: const Text(
-                      'Add a question',
+                      saveText,
                     ),
-                    onPressed: () {
-                      // Create question and edit it immediatly
-                      setState(() {
-                        _qweez.questions.add(Question.empty());
-                      });
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => EditQuestionPage(
-                            question: _qweez.questions.last,
-                          ),
-                        ),
-                      );
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        if (_qweez.id != null) {
+                          await _qweezRepo.update(_qweez);
+                        } else {
+                          await _qweezRepo.add(_qweez);
+                        }
+
+                        context.beamToReplacementNamed('/');
+                      }
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: paddingVertical),
-                  child: SizedBox(
-                    width: double.maxFinite,
-                    height: 40,
-                    child: ElevatedButton(
-                      child: const Text(
-                        saveText,
-                      ),
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          if (_qweez.id != null) {
-                            await _qweezRepo.update(_qweez);
-                          } else {
-                            await _qweezRepo.add(_qweez);
-                          }
-
-                          Beamer.of(context).beamBack();
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
