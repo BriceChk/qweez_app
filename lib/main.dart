@@ -15,6 +15,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setPathUrlStrategy();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -75,7 +76,7 @@ class _MyAppState extends State<MyApp> {
           final qweezId = state.pathParameters['qweezId']!;
           return BeamPage(
             key: ValueKey('qweez-present-$qweezId'),
-            child: QuestionsPresenterWaitingPage(
+            child: PresentQweezPage(
               qweezId: qweezId,
             ),
             type: BeamPageType.cupertino,

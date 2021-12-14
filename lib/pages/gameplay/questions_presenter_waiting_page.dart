@@ -10,19 +10,19 @@ import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/responsive.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 
-class QuestionsPresenterWaitingPage extends StatefulWidget {
+class PresentQweezPage extends StatefulWidget {
   final String qweezId;
 
-  const QuestionsPresenterWaitingPage({
+  const PresentQweezPage({
     Key? key,
     required this.qweezId,
   }) : super(key: key);
 
   @override
-  State<QuestionsPresenterWaitingPage> createState() => _QuestionsPresenterWaitingPageState();
+  State<PresentQweezPage> createState() => _PresentQweezPageState();
 }
 
-class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitingPage> {
+class _PresentQweezPageState extends State<PresentQweezPage> {
   final _questionnaireRepository = QweezRepository();
 
   Qweez? _questionnaire;
@@ -42,12 +42,7 @@ class _QuestionsPresenterWaitingPageState extends State<QuestionsPresenterWaitin
   Future<void> _getData() async {
     _questionnaire = await _questionnaireRepository.get(widget.qweezId);
 
-    setState(() {
-      // TODO check pour mettre la bdd en accord + mettre isActive à true
-      // _questionnaire!.players.add(
-      //   Player(userName: widget.username),
-      // );
-    });
+    setState(() {});
   }
 
   @override
