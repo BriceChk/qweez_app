@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:qweez_app/components/appbar/classic_appbar.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
 import 'package:qweez_app/constants.dart';
+import 'package:qweez_app/models/qweez.dart';
+import 'package:qweez_app/pages/gameplay/questions/player_list_widget.dart';
+import 'package:qweez_app/repository/questionnaire_repository.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class JoinGamePage extends StatefulWidget {
   final String gameCode;
@@ -16,14 +19,82 @@ class JoinGamePage extends StatefulWidget {
 //TODO Connect to socket.io, get game info, react to events, send answers to socket
 
 class _JoinGamePageState extends State<JoinGamePage> {
+  final _qweezRepo = QweezRepository();
   final _formKey = GlobalKey<FormState>();
 
+  String _usernameInput = '';
   String _username = '';
+  String _errorText = '';
+  late Socket _socket;
+
+  bool _gamePlaying = false;
+
+  List<String> _playerList = [];
+
+  Qweez? _qweez;
+  int _currentQuestionIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _socket = io('http://localhost:3000', OptionBuilder().setTransports(['websocket']).build());
+
+    _socket.on('qweez-id', (data) {
+      _qweezRepo.get(data['qweezId']).then((value) {
+        if (value == null) {
+          //TODO Alert + go home
+          return;
+        }
+        setState(() {
+          _qweez = value;
+        });
+      });
+    });
+
+    _socket.on('player-joined', (data) {
+      setState(() {
+        _playerList = List<String>.from(data['usernames']);
+      });
+    });
+    _socket.on('player-left', (data) {
+      setState(() {
+        _playerList.remove(data['username']);
+      });
+    });
+
+    //TODO Game events
+
+    _socket.on('username-already-taken', (data) {
+      print('username taken');
+      setState(() {
+        _username = '';
+        _errorText = 'This username is already taken';
+      });
+    });
+    _socket.on('unknown-room', (data) {
+      print('unknown room');
+      //TODO Alert + go home
+    });
+    _socket.on('game-already-started', (data) {
+      print('already started');
+      //TODO Alert + go home
+    });
+    _socket.on('game-host-quit', (data) {
+      print('host quit');
+      //TODO Alert + go home
+    });
+  }
+
+  @override
+  void dispose() {
+    _socket.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const ClassicAppbar(title: "Join the game"),
+      appBar: ClassicAppbar(title: _qweez != null ? _qweez!.name : "Join the game"),
       body: _buildBody(),
     );
   }
@@ -63,16 +134,17 @@ class _JoinGamePageState extends State<JoinGamePage> {
                               return 'Please enter your username';
                             }
                           },
-                          onChanged: (username) {
-                            _username = username;
-                          },
+                          onChanged: (input) => _usernameInput = input,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: paddingVertical),
                           child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                // TODO push à la waiting page
+                                setState(() {
+                                  _username = _usernameInput;
+                                });
+                                _socket.emit('join-room', {'gameCode': widget.gameCode, 'username': _username});
                               }
                             },
                             child: const Padding(
@@ -84,6 +156,14 @@ class _JoinGamePageState extends State<JoinGamePage> {
                       ],
                     ),
                   ),
+                  Container(
+                    padding: const EdgeInsets.only(top: paddingVertical),
+                    height: 50,
+                    child: Text(
+                      _errorText,
+                      style: const TextStyle(color: colorRed),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -152,6 +232,30 @@ class _JoinGamePageState extends State<JoinGamePage> {
       );
     }
 
-    return Container();
+    if (_qweez == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!_gamePlaying) {
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: paddingVertical),
+              child: Center(
+                child: Text(
+                  'The Qweez will start soon...',
+                  style: TextStyle(fontSize: fontSizeSubtitle),
+                ),
+              ),
+            ),
+            PlayerList(playerList: _playerList),
+          ],
+        ),
+      );
+    }
+
+    //TODO The game
+    return const Text('PLAYING');
   }
 }

@@ -120,12 +120,10 @@ class _EditQweezPageState extends State<EditQweezPage> {
                   child: const Text(
                     'Add a question',
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     // Create question and edit it immediatly
-                    setState(() {
-                      _qweez.questions.add(Question.empty());
-                    });
-                    Navigator.push(
+                    _qweez.questions.add(Question.empty());
+                    await Navigator.push(
                       context,
                       CupertinoPageRoute(
                         builder: (context) => EditQuestionPage(
@@ -133,6 +131,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
                         ),
                       ),
                     );
+                    setState(() {});
                   },
                 ),
               ),
@@ -190,8 +189,8 @@ class _EditQweezPageState extends State<EditQweezPage> {
                   ),
                 ),
               ),
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await Navigator.push(
                   context,
                   CupertinoPageRoute(
                     builder: (context) => EditQuestionPage(
@@ -199,6 +198,7 @@ class _EditQweezPageState extends State<EditQweezPage> {
                     ),
                   ),
                 );
+                setState(() {});
               },
             ),
           ),

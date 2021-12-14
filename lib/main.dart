@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/pages/gameplay/join_game_page.dart';
 import 'package:qweez_app/pages/gameplay/play_alone_page.dart';
-import 'package:qweez_app/pages/gameplay/questions_presenter_waiting_page.dart';
+import 'package:qweez_app/pages/gameplay/present_game_page.dart';
 import 'package:qweez_app/pages/home_page/home_page.dart';
 import 'package:qweez_app/pages/launch_page.dart';
 import 'package:qweez_app/pages/login_page.dart';
@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
           final qweezId = state.pathParameters['qweezId']!;
           return BeamPage(
             key: ValueKey('qweez-present-$qweezId'),
-            child: PresentQweezPage(qweezId: qweezId),
+            child: PresentGamePage(qweezId: qweezId),
             type: BeamPageType.cupertino,
             title: 'Qweez - Presenting',
           );

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qweez_app/pages/home_page/qweez_card.dart';
-import 'package:qweez_app/components/choose_playername_modal.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/qweez.dart';
@@ -347,10 +346,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       setState(() {
         _result = scanData;
         if (_result != null) {
-          if (_result!.code!.contains('QweezApp')) {
+          if (_result!.code!.contains('qweez-app.web.app/play/')) {
             controller.pauseCamera();
-            var id = _result!.code!.split("QweezApp-");
-            showPickUsername(context, id.last);
+            var id = _result!.code!.split("qweez-app.web.app/play/")[1];
+            context.beamToNamed('/play/$id');
           }
         }
         controller.resumeCamera();

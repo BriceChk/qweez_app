@@ -1,3 +1,4 @@
+import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,12 +49,12 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                     itemBuilder: (BuildContext context) {
                       return <PopupMenuEntry<int>>[
                         const PopupMenuItem(
-                          value: 1,
-                          child: Text('Delete account'),
-                        ),
-                        const PopupMenuItem(
                           value: 2,
                           child: Text('Log out'),
+                        ),
+                        const PopupMenuItem(
+                          value: 1,
+                          child: Text('Delete account'),
                         ),
                         const PopupMenuItem(
                           value: 3,
@@ -63,13 +64,13 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                     },
                     onSelected: (result) {
                       switch (result) {
-                        // Case when we hit "delete account"
-                        case 1:
-                          _showDeleteAccountConfirmation();
-                          break;
                         // Case when we hit "Log out"
-                        case 2:
+                        case 1:
                           FirebaseAuth.instance.signOut();
+                          break;
+                        // Case when we hit "delete account"
+                        case 2:
+                          _showDeleteAccountConfirmation();
                           break;
                         // Case when we hit "license infos"
                         case 3:
@@ -128,8 +129,8 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                         backgroundColor: colorWhite,
                         textInputAction: TextInputAction.done,
                         onChanged: (value) async {
-                          if (value.length == 5) {
-                            //TODO Aller sur la page de join quiz
+                          if (value.length == 4) {
+                            Beamer.of(context).beamToNamed('/play/$value');
                           }
                         },
                       ),
