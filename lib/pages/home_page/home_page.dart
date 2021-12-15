@@ -2,12 +2,11 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:qweez_app/lifecycle_event_handler.dart';
-import 'package:qweez_app/pages/home_page/qweez_card.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
 import 'package:qweez_app/models/qweez.dart';
 import 'package:qweez_app/pages/home_page/home_page_appbar.dart';
+import 'package:qweez_app/pages/home_page/qweez_card.dart';
 import 'package:qweez_app/pages/responsive.dart';
 import 'package:qweez_app/repository/questionnaire_repository.dart';
 
@@ -31,6 +30,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   bool get _loggedIn => MyApp.user != null;
   var _isLoaded = false;
+  var _beamerListenerReady = false;
 
   @override
   void initState() {
@@ -48,12 +48,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
     _animationController.repeat(reverse: true);
 
-    // Refresh data when coming back to this page
-    WidgetsBinding.instance!.addObserver(LifecycleEventHandler(
-        resumeCallBack: () async => setState(() {
-              _getData();
-            })));
-
     _getData();
   }
 
@@ -70,6 +64,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    // Auto reload data when coming back to this page
+    if (!_beamerListenerReady) {
+      Beamer.of(context).addListener(() {
+        if (context.currentBeamLocation.state.routeInformation.location == '/') {
+          _getData();
+        }
+      });
+      _beamerListenerReady = true;
+    }
+
     return Container(
       color: colorBlue,
       child: SafeArea(
@@ -78,6 +82,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             onQrCodeTap: () {
               _showQrCodeDialog(context);
             },
+            onLogout: () => _getData(),
             context: context,
           ),
           body: _getBody(),

@@ -9,11 +9,13 @@ import 'package:qweez_app/main.dart';
 class HomePageAppBar extends StatelessWidget implements PreferredSize {
   final Function() onQrCodeTap;
   final BuildContext context;
+  final Function() onLogout;
 
   const HomePageAppBar({
     Key? key,
     required this.onQrCodeTap,
     required this.context,
+    required this.onLogout,
   }) : super(key: key);
 
   @override
@@ -62,11 +64,12 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                         ),
                       ];
                     },
-                    onSelected: (result) {
+                    onSelected: (result) async {
                       switch (result) {
                         // Case when we hit "Log out"
                         case 1:
-                          FirebaseAuth.instance.signOut();
+                          await FirebaseAuth.instance.signOut();
+                          onLogout();
                           break;
                         // Case when we hit "delete account"
                         case 2:
