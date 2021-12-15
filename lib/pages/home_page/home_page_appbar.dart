@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:qweez_app/components/form/my_text_form_field.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
-import 'package:qweez_app/pages/responsive.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSize {
   final Function() onQrCodeTap;
@@ -137,7 +136,7 @@ class HomePageAppBar extends StatelessWidget implements PreferredSize {
                         },
                       ),
                     ),
-                    if (!Responsive.isDesktop(context))
+                    if (!kIsWeb)
                       Container(
                         margin: const EdgeInsets.only(left: paddingVertical / 2),
                         child: Material(
