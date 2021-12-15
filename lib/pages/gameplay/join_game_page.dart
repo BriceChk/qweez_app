@@ -212,16 +212,21 @@ class _JoinGamePageState extends State<JoinGamePage> with TickerProviderStateMix
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      MyTextFormField(
-                        hintText: 'Username',
-                        textInputAction: TextInputAction.done,
-                        valueText: '',
-                        validator: (username) {
-                          if (username!.isEmpty) {
-                            return 'Please enter your username';
-                          }
-                        },
-                        onChanged: (input) => _usernameInput = input.trim(),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 500,
+                        ),
+                        child: MyTextFormField(
+                          hintText: 'Username',
+                          textInputAction: TextInputAction.done,
+                          valueText: '',
+                          validator: (username) {
+                            if (username!.isEmpty) {
+                              return 'Please enter your username';
+                            }
+                          },
+                          onChanged: (input) => _usernameInput = input.trim(),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: paddingVertical),
