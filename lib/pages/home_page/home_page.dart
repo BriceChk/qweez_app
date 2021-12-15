@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -47,6 +48,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
     );
     _animationController.repeat(reverse: true);
+
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      _getData();
+    });
 
     _getData();
   }
