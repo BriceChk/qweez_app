@@ -126,64 +126,71 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              MyTextFormField(
-                                valueText: _email,
-                                hintText: 'E-mail',
-                                textInputAction: TextInputAction.next,
-                                validator: (String? email) {
-                                  return _email.isEmpty ? 'Please enter an e-mail' : null;
-                                },
-                                onChanged: (String email) {
-                                  _email = email;
-                                },
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                maxWidth: 500,
                               ),
-                              const SizedBox(
-                                height: paddingVertical,
-                              ),
-                              MyTextFormField(
-                                valueText: _password,
-                                hintText: 'Password',
-                                textInputAction: _isRegister ? TextInputAction.next : TextInputAction.done,
-                                isPassword: true,
-                                validator: (String? password) {
-                                  return password!.isEmpty ? 'Please enter a password' : null;
-                                },
-                                onChanged: (String password) {
-                                  _password = password;
-                                },
-                              ),
-                              if (_isRegister)
-                                MyTextFormField(
-                                  valueText: _passwordConfirmation,
-                                  hintText: 'Password confirmation',
-                                  textInputAction: TextInputAction.done,
-                                  isPassword: true,
-                                  validator: (String? passwordConfirmation) {
-                                    return passwordConfirmation!.isEmpty
-                                        ? 'Please enter re-enter your password'
-                                        : _passwordConfirmation != _password
-                                            ? 'The passwords do not match'
-                                            : null;
-                                  },
-                                  onChanged: (String password) {
-                                    _passwordConfirmation = password;
-                                  },
-                                ),
-                              if (_errorText.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: paddingVertical),
-                                  child: Text(
-                                    _errorText,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: colorRed,
-                                    ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  MyTextFormField(
+                                    valueText: _email,
+                                    hintText: 'E-mail',
+                                    textInputAction: TextInputAction.next,
+                                    validator: (String? email) {
+                                      return _email.isEmpty ? 'Please enter an e-mail' : null;
+                                    },
+                                    onChanged: (String email) {
+                                      _email = email;
+                                    },
                                   ),
-                                ),
-                            ],
+                                  const SizedBox(
+                                    height: paddingVertical,
+                                  ),
+                                  MyTextFormField(
+                                    valueText: _password,
+                                    hintText: 'Password',
+                                    textInputAction: _isRegister ? TextInputAction.next : TextInputAction.done,
+                                    isPassword: true,
+                                    validator: (String? password) {
+                                      return password!.isEmpty ? 'Please enter a password' : null;
+                                    },
+                                    onChanged: (String password) {
+                                      _password = password;
+                                    },
+                                  ),
+                                  if (_isRegister)
+                                    MyTextFormField(
+                                      valueText: _passwordConfirmation,
+                                      hintText: 'Password confirmation',
+                                      textInputAction: TextInputAction.done,
+                                      isPassword: true,
+                                      validator: (String? passwordConfirmation) {
+                                        return passwordConfirmation!.isEmpty
+                                            ? 'Please enter re-enter your password'
+                                            : _passwordConfirmation != _password
+                                                ? 'The passwords do not match'
+                                                : null;
+                                      },
+                                      onChanged: (String password) {
+                                        _passwordConfirmation = password;
+                                      },
+                                    ),
+                                  if (_errorText.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: paddingVertical),
+                                      child: Text(
+                                        _errorText,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: colorRed,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                         Row(
@@ -219,30 +226,35 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ],
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(bottom: paddingVertical * 2, top: paddingVertical),
-                          height: 50,
-                          width: double.maxFinite,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(colorYellow),
+                        Center(
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: paddingVertical * 2, top: paddingVertical),
+                            height: 50,
+                            constraints: const BoxConstraints(
+                              maxWidth: 500,
                             ),
-                            child: Text(
-                              _isRegister ? 'Register' : 'Log in',
-                              style: const TextStyle(
-                                color: colorBlack,
-                                fontWeight: FontWeight.w500,
+                            width: double.maxFinite,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(colorYellow),
                               ),
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                if (_isRegister) {
-                                  signUp();
-                                } else {
-                                  login();
+                              child: Text(
+                                _isRegister ? 'Register' : 'Log in',
+                                style: const TextStyle(
+                                  color: colorBlack,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  if (_isRegister) {
+                                    signUp();
+                                  } else {
+                                    login();
+                                  }
                                 }
-                              }
-                            },
+                              },
+                            ),
                           ),
                         ),
                       ],
