@@ -278,6 +278,7 @@ class _QuestionWidgetState extends State<QuestionWidget> with TickerProviderStat
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: const [
             Icon(
               Icons.align_vertical_bottom_rounded,
