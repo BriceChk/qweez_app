@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qweez_app/constants.dart';
 
@@ -21,7 +22,7 @@ class ClassicAppbar extends StatelessWidget implements PreferredSize {
           height: 85,
           width: double.maxFinite,
           alignment: Alignment.center,
-          margin: const EdgeInsets.only(top: paddingVertical * 2),
+          margin: EdgeInsets.only(top: kIsWeb ? paddingVertical : paddingVertical * 2),
           padding: const EdgeInsets.symmetric(
             horizontal: paddingHorizontal,
           ),
