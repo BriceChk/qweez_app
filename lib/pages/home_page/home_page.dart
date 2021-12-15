@@ -128,8 +128,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       if (_isLoaded) {
         return _qweezList.isEmpty ? _noQweezContent() : _loggedInContent(_qweezList);
       } else {
-        return CircularProgressIndicator(
-          valueColor: _colorTween,
+        return Padding(
+          padding: const EdgeInsets.only(top: paddingVertical),
+          child: CircularProgressIndicator(
+            valueColor: _colorTween,
+          ),
         );
       }
     } else {
