@@ -69,6 +69,7 @@ class ErrorPage extends StatelessWidget {
                           ),
                           Icon(
                             Icons.arrow_forward_rounded,
+                            color: colorBlack,
                           ),
                         ],
                       ),
