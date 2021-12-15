@@ -47,6 +47,9 @@ class ErrorPage extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(colorYellow),
+                    ),
                     onPressed: () {
                       context.beamToNamed('/');
                     },
@@ -57,7 +60,12 @@ class ErrorPage extends StatelessWidget {
                         children: const [
                           Padding(
                             padding: EdgeInsets.only(right: paddingHorizontal / 3),
-                            child: Text('Home page'),
+                            child: Text(
+                              'Home',
+                              style: TextStyle(
+                                color: colorBlack,
+                              ),
+                            ),
                           ),
                           Icon(
                             Icons.arrow_forward_rounded,
