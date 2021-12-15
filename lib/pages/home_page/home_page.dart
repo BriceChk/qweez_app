@@ -2,6 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:qweez_app/lifecycle_event_handler.dart';
 import 'package:qweez_app/pages/home_page/qweez_card.dart';
 import 'package:qweez_app/constants.dart';
 import 'package:qweez_app/main.dart';
@@ -46,19 +47,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
     );
     _animationController.repeat(reverse: true);
-  }
 
-/*  // In order to get hot reload to work we need to pause the camera if the platform
-  // is android, or resume the camera if the platform is iOS.
-  @override
-  void reassemble() {
-    super.reassemble();
-    if (Platform.isAndroid) {
-      _qrController!.pauseCamera();
-    } else if (Platform.isIOS) {
-      _qrController!.resumeCamera();
-    }
-  }*/
+    // Refresh data when coming back to this page
+    WidgetsBinding.instance!.addObserver(LifecycleEventHandler(
+        resumeCallBack: () async => setState(() {
+              _getData();
+            })));
+
+    _getData();
+  }
 
   void _getData() {
     if (_loggedIn) {
@@ -73,8 +70,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    _getData();
-
     return Container(
       color: colorBlue,
       child: SafeArea(
