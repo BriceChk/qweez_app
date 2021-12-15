@@ -16,16 +16,18 @@ class QuestionAppBar extends StatelessWidget implements PreferredSize {
   }) : super(key: key);
 
   @override
-  Size get preferredSize => const Size(double.infinity, 230);
+  Size get preferredSize => const Size(double.infinity, 200);
 
   @override
   Widget get child => Container(
         color: colorBlue.withOpacity(0.9),
-        padding: const EdgeInsets.only(top: paddingVertical * 2),
+        padding: const EdgeInsets.only(top: paddingVertical),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: paddingVertical, left: paddingHorizontal, right: paddingHorizontal),
+              padding:
+                  const EdgeInsets.only(top: paddingVertical / 2, left: paddingHorizontal, right: paddingHorizontal),
               child: Text(
                 qweezTitle,
                 maxLines: 1,
@@ -42,9 +44,16 @@ class QuestionAppBar extends StatelessWidget implements PreferredSize {
               children: [
                 // Scanning and enter code + title container
                 Container(
+                  constraints: const BoxConstraints(
+                    maxHeight: 100,
+                    minHeight: 50,
+                  ),
                   width: double.maxFinite,
                   margin: const EdgeInsets.only(top: paddingVertical * 2),
-                  padding: const EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical * 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: paddingHorizontal,
+                    vertical: paddingVertical * 2,
+                  ),
                   decoration: const BoxDecoration(
                     color: colorBlue,
                     borderRadius: BorderRadius.only(
@@ -52,19 +61,13 @@ class QuestionAppBar extends StatelessWidget implements PreferredSize {
                       topRight: Radius.circular(borderRadius),
                     ),
                   ),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxHeight: 130,
-                      minHeight: 50,
-                    ),
-                    child: AutoSizeText(
-                      question.question,
-                      maxLines: 4,
-                      style: const TextStyle(
-                        fontSize: fontSizeTitle,
-                        color: colorWhite,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  child: AutoSizeText(
+                    question.question,
+                    maxLines: 3,
+                    style: const TextStyle(
+                      fontSize: fontSizeTitle,
+                      color: colorWhite,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
