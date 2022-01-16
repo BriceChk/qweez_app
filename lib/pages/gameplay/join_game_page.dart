@@ -45,7 +45,7 @@ class _JoinGamePageState extends State<JoinGamePage> with TickerProviderStateMix
     super.initState();
     _socket = io(socketIoHost, OptionBuilder().setTransports(['websocket']).disableAutoConnect().build());
 
-    _socket.on('qweez-id', (data) {
+    _socket.on('game-data', (data) {
       _qweezRepo.get(data['qweezId']).then((value) {
         if (value == null) {
           setState(() {
@@ -73,7 +73,7 @@ class _JoinGamePageState extends State<JoinGamePage> with TickerProviderStateMix
     _socket.on('status-update', (data) {
       setState(() {
         _gamePlaying = data['status'] == 'playing';
-        _currentQuestionIndex = data['questionIndex'];
+        _currentQuestionIndex = data['gameData']['currentQuestionIndex'];
       });
     });
     _socket.on('show-result', (data) {

@@ -57,12 +57,12 @@ class _PresentGamePageState extends State<PresentGamePage> {
   void _initSocket() {
     _socket = io(socketIoHost, OptionBuilder().setTransports(['websocket']).disableAutoConnect().build());
     _socket.connect();
-    _socket.emit('request-room', {'qweezId': _qweez!.id});
+    _socket.emit('request-room', {'qweezId': _qweez!.id, 'currentQuestionIndex': 0});
 
     _socket.on('room-created', (data) {
       setState(() {
         _gameCode = data['gameCode'];
-        _url = data['url'];
+        _url = 'https://qweez-app.web.app/play/' + _gameCode!;
       });
     });
 
@@ -80,7 +80,7 @@ class _PresentGamePageState extends State<PresentGamePage> {
     _socket.on('status-update', (data) {
       setState(() {
         _gamePlaying = data['status'] == 'playing';
-        _currentQuestionIndex = data['questionIndex'];
+        _currentQuestionIndex = data['gameData']['currentQuestionIndex'];
       });
     });
 
@@ -132,12 +132,14 @@ class _PresentGamePageState extends State<PresentGamePage> {
       playerList: _playerList,
       canSelect: false,
       onNextQuestion: () {
-        setState(() {
-          _socket.emit('next-question');
+        _currentQuestionIndex++;
+        _socket.emit('update-data', {
+          'currentQuestionIndex': _currentQuestionIndex,
+          'qweezId': _qweez!.id,
         });
       },
       onFinished: (goodAnswer) {
-        _socket.emit('show-result');
+        _socket.emit('emit-event', {'eventName': 'show-result'});
       },
     );
   }
@@ -201,7 +203,10 @@ class _PresentGamePageState extends State<PresentGamePage> {
             onPressed: _playerList.isEmpty
                 ? null
                 : () {
-                    _socket.emit('start-game');
+                    _socket.emit('start-game', {
+                      'currentQuestionIndex': 0,
+                      'qweezId': _qweez!.id,
+                    });
                   },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: paddingVertical / 2),
