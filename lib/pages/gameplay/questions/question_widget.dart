@@ -209,7 +209,7 @@ class _QuestionWidgetState extends State<QuestionWidget> with TickerProviderStat
   }
 
   Widget _buildRankingButton() {
-    widget.playerList!.sort((a, b) => a.score.compareTo(b.score));
+    widget.playerList!.sort((a, b) => b.score.compareTo(a.score));
 
     return ElevatedButton(
       onPressed: () {
